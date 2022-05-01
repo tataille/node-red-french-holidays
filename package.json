@@ -1,0 +1,19 @@
+{
+  "name": "red-french-holiday",
+  "version": "1.0.0",
+  "description": "node-red-french-holiday ========================",
+  "main": "french-holiday.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "node-red": {
+    "nodes": {
+      "french-holiday": "french-holiday.js"
+    }
+  },
+  "author": "Jean-Marc TAILLANT",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.2.3"
+  }
+}
