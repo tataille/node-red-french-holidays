@@ -1,5 +1,8 @@
 # node-red-french-holiday
 
+<a href="https://www.buymeacoffee.com/jeanmarctaz"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a beer&emoji=🍺&slug=jeanmarctaz&button_colour=40DCA5&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
+
+
 A <a href="http://nodered.org" target="_new">Node-RED</a> node to retrieve French School Academy and public holiday depending on School Academie and geo location..
 
 ## Install
