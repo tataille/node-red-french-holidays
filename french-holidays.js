@@ -233,5 +233,5 @@ module.exports = function (RED) {
   
   })
 }
-  RED.nodes.registerType('french-holiday', RetrieveFrenchHoliday)
+  RED.nodes.registerType('french-holidays', RetrieveFrenchHoliday)
 }

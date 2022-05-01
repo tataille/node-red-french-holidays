@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('french-holiday',{
+    RED.nodes.registerType('french-holidays',{
         category: 'function',
         color: '#a6bbcf',
         defaults: {
@@ -11,19 +11,19 @@
         outputs:1,
         icon: "font-awesome/fa-calendar",
         label: function() {
-            return this.name||"french-holiday";
+            return this.name||"french-holidays";
         }
     });
 </script>
 
-<script type="text/html" data-template-name="french-holiday">
+<script type="text/html" data-template-name="french-holidays">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-academy"><i class="fa fa-graduation-cap"></i>Académie</label>
-        <select id="node-input-academy" placeholder=" Académie">
+        <label for="node-input-academy"><i class="fa fa-graduation-cap"></i> Académie</label>
+        <select id="node-input-academy" placeholder="Académie">
             <option>Polynésie</option>
             <option>Guadeloupe</option>
             <option>Aix-Marseille</option>
@@ -60,7 +60,7 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-geo"><i class="fa fa-globe"></i>Région</label>
+        <label for="node-input-geo"><i class="fa fa-globe"></i> Région</label>
         <select id="node-input-geo" placeholder="Geo">
             <option>Alsace-Moselle</option> 
             <option>Guadeloupe</option>
@@ -78,8 +78,8 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="french-holiday">
-    <p>A simple node that store holiday details in global context</p>
+<script type="text/html" data-help-name="french-holidays">
+    <p>A simple node that store holidays details in global context</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">
