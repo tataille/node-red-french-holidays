@@ -48,7 +48,11 @@ year: 2022
 
 ### Retrieving data on a daily base
 
+Retrieve Holiday data every day at 1:00
 
+```json
+[{"id":"f6f2187d.f17ca8","type":"tab","label":"Exemple Académie Rennes & Féries Métropole","disabled":false,"info":""},{"id":"69a824ffaab0680b","type":"french-holiday","z":"f6f2187d.f17ca8","name":"Vacances","academy":"Rennes","geo":"Métropole","x":380,"y":240,"wires":[["821c23230cbef1e6"]]},{"id":"821c23230cbef1e6","type":"debug","z":"f6f2187d.f17ca8","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":550,"y":240,"wires":[]},{"id":"24579bcb.5c9814","type":"inject","z":"f6f2187d.f17ca8","name":"","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"00 01 * * *","once":false,"onceDelay":"","topic":"","payload":"Let's check calendar!!!","payloadType":"str","x":150,"y":240,"wires":[["69a824ffaab0680b"]]}]
+```
 
 ## Development
 
