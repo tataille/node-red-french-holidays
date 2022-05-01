@@ -2,7 +2,16 @@
   "name": "red-french-holidays",
   "version": "1.0.0",
   "description": "node-red-french-holidays ========================",
+  "keywords": [
+    "node-red",
+    "french-holidays",
+    "holidays",
+    "france",
+    "specialdays",
+    "weekdays"
+  ],
   "main": "french-holidays.js",
+  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
