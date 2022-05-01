@@ -1,5 +1,5 @@
 {
-  "name": "red-french-holidays",
+  "name": "node-red-french-holidays",
   "version": "1.0.0",
   "description": "node-red-french-holidays ========================",
   "keywords": [
@@ -11,18 +11,21 @@
     "weekdays"
   ],
   "main": "french-holidays.js",
-  
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha \"test/**/*_spec.js\""
   },
   "node-red": {
     "nodes": {
-      "french-holiday": "french-holidays.js"
+      "french-holidays": "french-holidays.js"
     }
   },
   "author": "Jean-Marc TAILLANT",
   "license": "ISC",
   "dependencies": {
     "node-fetch": "^3.2.3"
+  },
+  "devDependencies": {
+    "node-red": "^2.2.2",
+    "node-red-node-test-helper": "^0.2.7"
   }
 }

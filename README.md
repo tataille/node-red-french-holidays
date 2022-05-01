@@ -63,7 +63,6 @@ Retrieve Holiday data every day at 1:00
 
 ```bash
     docker run -it -p 1880:1880 -v node_red_data:/data -v $(pwd):/node-red-french-holidays --name nodered nodered/node-red
-    333
 ```
 
 Then connect your VS Code into __nodered__ container
