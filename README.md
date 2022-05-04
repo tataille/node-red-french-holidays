@@ -14,7 +14,7 @@ Requires a network connection to retrieve data dynmically from the following off
 * <https://api.gouv.fr/documentation/jours-feries>
 * <https://api.gouv.fr/documentation/api-calendrier-scolaire>
 
-!['Retrieve French Holidays'](assets/simple-example.gif)
+!['Retrieve French Holidays'](assets/example.gif)
 
 ## Install
 
@@ -61,6 +61,8 @@ year: 2022
 
 ## Development
 
+Start a __node-red__ container.
+
 ```bash
     docker run -it -p 1880:1880 -v node_red_data:/data -v $(pwd):/node-red-french-holidays --name nodered nodered/node-red
 ```
@@ -72,6 +74,13 @@ To install the module in "debug" mode
 ```bash
 cd /data/
 npm install /node-red-french-holidays/
+```
+
+To start the tests
+
+```bash
+cd /node-red-french-holidays
+npm test
 ```
 
 Then restart node-red container
