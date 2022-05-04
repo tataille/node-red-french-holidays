@@ -1,10 +1,10 @@
 {
   "name": "@tataille/node-red-french-holidays",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "node-red-french-holidays ========================",
   "bugs": {
-    "url" : "https://github.com/tataille/node-red-french-holidays/issues",
-    "email" : "jean.marc.taillant@gmail.com"
+    "url": "https://github.com/tataille/node-red-french-holidays/issues",
+    "email": "jean.marc.taillant@gmail.com"
   },
   "engines": {
     "node": ">=12.0.0"
