@@ -2,6 +2,10 @@
   "name": "@tataille/node-red-french-holidays",
   "version": "1.0.0",
   "description": "node-red-french-holidays ========================",
+  "bugs": {
+    "url" : "https://github.com/tataille/node-red-french-holidays/issues",
+    "email" : "jean.marc.taillant@gmail.com"
+  },
   "keywords": [
     "node-red",
     "french-holidays",
