@@ -1,5 +1,5 @@
 {
-  "name": "@myScope/node-red-french-holidays",
+  "name": "@tataille/node-red-french-holidays",
   "version": "1.0.0",
   "description": "node-red-french-holidays ========================",
   "keywords": [
@@ -21,7 +21,7 @@
     }
   },
   "author": "Jean-Marc TAILLANT",
-  "license": "ISC",
+  "license": "Apache 2.0",
   "dependencies": {
     "node-fetch": "^3.2.3"
   },
