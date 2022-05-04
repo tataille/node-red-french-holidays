@@ -1,5 +1,5 @@
 {
-  "name": "node-red-french-holidays",
+  "name": "@myScope/node-red-french-holidays",
   "version": "1.0.0",
   "description": "node-red-french-holidays ========================",
   "keywords": [
@@ -15,8 +15,9 @@
     "test": "mocha \"test/**/*_spec.js\""
   },
   "node-red": {
+    "version": ">=2.0.0",
     "nodes": {
-      "french-holidays": "french-holidays.js"
+      "french-holidays": "french-holidays/french-holidays.js"
     }
   },
   "author": "Jean-Marc TAILLANT",

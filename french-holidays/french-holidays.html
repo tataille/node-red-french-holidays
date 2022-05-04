@@ -1,0 +1,138 @@
+<script type="text/javascript">
+    RED.nodes.registerType('french-holidays',{
+        category: 'function',
+        color: '#3FADB5',
+        defaults: {
+            name: {value:""},   
+            academy: {value:""},
+            geo: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-calendar-check-o",
+        label: function() {
+            return this.name||"french-holidays";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="french-holidays">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-academy"><i class="fa fa-graduation-cap"></i> 
+            Academic Region</label>
+        <select id="node-input-academy" placeholder="Academic">
+            <option>Polynésie</option>
+            <option>Guadeloupe</option>
+            <option>Aix-Marseille</option>
+            <option>Amiens</option>
+            <option>Besançon</option>
+            <option>Bordeaux</option>
+            <option>Clermont-Ferrand</option>
+            <option>Créteil</option>
+            <option>Dijon</option>
+            <option>Grenoble</option>
+            <option>Lille</option>
+            <option>Limoges</option>
+            <option>Lyon</option>
+            <option>Montpellier</option>
+            <option>Nancy-Metz</option>
+            <option>Nantes</option>
+            <option>Nice</option>
+            <option>Normandie</option>
+            <option>Orléans-Tours</option>
+            <option>Paris</option>
+            <option>Poitiers</option>
+            <option>Reims</option>
+            <option>Rennes</option>
+            <option>Strasbourg</option>
+            <option>Toulouse</option>
+            <option>Versailles</option>
+            <option>Nouvelle Calédonie</option>
+            <option>Guyane</option>
+            <option>Martinique</option>
+            <option>Mayotte</option>
+            <option>Corse</option>
+            <option>Réunion</option>
+            <option>Saint Pierre et Miquelon</option> 
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-geo"><i class="fa fa-globe"></i> Region</label>
+        <select id="node-input-geo" placeholder="Region">
+            <option>Alsace-Moselle</option> 
+            <option>Guadeloupe</option>
+            <option>La Réunion</option>
+            <option>Martinique</option>
+            <option>Mayotte</option>
+            <option>Métropole</option>
+            <option>Nouvelle Calédonie</option>
+            <option>Polynésie Française</option>
+            <option>Saint Barthélémy</option>
+            <option>Saint Martin</option>
+            <option>Saint Pierre et Miquelon</option>
+            <option>Wallis et Futuna</option>
+            </select>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="french-holidays">
+    <body>
+    <h3>About</h3>
+    <p>Retrieves French public and school holidays details</p>
+    <h3>Outputs</h3>
+    <ol class="node-ports">
+        <li>Standard output
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">object</span></dt>
+                <dd>holidays information and current day index</dd>
+            </dl>
+        </li>
+    </ol>
+    <h3>payload output properties</h3>
+
+    <h4>payload properties (default)</h4>
+            <p>Based on the Academic Region and French Region the payload is an object with the following properties:</p>
+            <dl class="message-properties">
+             <dt>day <span class="property-type">number</span></dt>
+             <dd> A number from 0 to 6 (0=Sunday,..., 6=Saturday</dd>
+
+             <dt>isPublicHoliday <span class="property-type">boolean</span></dt>
+             <dd> true/false depending on the current day and  the Public Holiday calendar (based on French Region).</dd>
+
+             <dt>isTomorrowPublicHoliday <span class="property-type">boolean</span></dt>
+             <dd>  true/false depending on the next day and  the Public Holiday calendar (based on French Region).</dd>
+
+             <dt>publicHolidayName <span class="property-type">string</span></dt>
+             <dd> String representation of the current day Public Holiday (based on French Region).</dd>
+
+             <dt>nextPublicHolidayName <span class="property-type">day-object</span></dt>
+             <dd> String representation of the next Public Holiday (based on French Region).</dd>
+
+             <dt>nextPublicHolidayDate <span class="property-type">string</span></dt>
+             <dd> string representation of the date for the next Public Holiday - format is YYYY:MM:DD (based on French Region).</dd>
+
+             <dt>isSchoolHoliday <span class="property-type">boolean</span></dt>
+             <dd> true/false depending on the current day and the School Holiday calendar (based on Academic Region).</dd>
+
+             <dt>isTomorrowSchoolHoliday <span class="property-type">number</span></dt>
+             <dd> true/false depending on the next day and the School Holiday calendar (based on Academic Region).</dd>
+
+             <dt>schoolHolidayName <span class="property-type">string</span></dt>
+             <dd> String representation of the next School Holiday (based on Academic Region).</dd>
+
+             <dt>year <span class="property-type">number</span></dt>
+             <dd> current year.</dd>
+
+         </dl>
+
+<h3>References</h3>
+    <ul>
+        <li><a>https://github.com/tataille/node-red-french-holidays</a> GitHub</li>
+    </ul>
+</body>
+</script>
+
