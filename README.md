@@ -10,7 +10,7 @@
 
 A <a href="http://nodered.org" target="_new">Node-RED</a> node to retrieve French School Academy and public holidays depending on School Academy and geo location..
 
-Requires a network connection to retrieve data dynmically from the following official APIs:
+Requires a network connection to retrieve data dynamically from the following official APIs:
 
 * <https://api.gouv.fr/documentation/jours-feries>
 * <https://api.gouv.fr/documentation/api-calendrier-scolaire>
