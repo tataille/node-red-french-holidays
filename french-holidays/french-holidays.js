@@ -37,7 +37,9 @@ module.exports = function (RED) {
     node.on('input', function (msg, send, done) {
       var today = new Date()
       var tomorrow = new Date(today);
+      
       tomorrow.setDate(today.getDate() + 1);
+      tomorrow = toISOLocal(tomorrow).split('T')[0];
       var year = today.getFullYear()
       var date = toISOLocal(new Date()).split('T')[0]
       var publicHolidayApi =
@@ -109,7 +111,7 @@ module.exports = function (RED) {
                 } else {
                   nextDate = kdates[i + 1]
                 }
-                if (tomorrow == date) {
+                if (tomorrow == currentDate) {
                   isTomorrowPublicHoliday = true
                   break
                 } else if (currentDate < tomorrow && tomorrow < nextDate) {
