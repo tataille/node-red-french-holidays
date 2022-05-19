@@ -2,7 +2,9 @@
   "name": "@tataille/node-red-french-holidays",
   "version": "1.0.3",
   "description": "A simple node-red component for working whith French holidays.",
-  "bugs": "https://github.com/tataille/node-red-french-holidays/issues",
+  "bugs": {
+    "url": "https://github.com/tataille/node-red-french-holidays/issues"
+  },
   "engines": {
     "node": ">=12.0.0"
   },
@@ -25,13 +27,21 @@
     }
   },
   "author": "Jean-Marc TAILLANT",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "dependencies": {
-    "node-fetch": "^3.2.3"
+    "node-fetch": "^3.2.4"
   },
   "devDependencies": {
     "mocha": "^10.0.0",
-    "node-red": "^2.2.2",
     "node-red-node-test-helper": "^0.2.7"
-  }
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tataille/node-red-french-holidays.git"
+  },
+  "homepage": "https://github.com/tataille/node-red-french-holidays#readme"
 }
