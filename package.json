@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "mocha": "^10.0.0",
-    "node-red": "^1.2.9",
+    "node-red": "^2.2.2",
     "node-red-node-test-helper": "^0.2.7"
   },
   "directories": {
