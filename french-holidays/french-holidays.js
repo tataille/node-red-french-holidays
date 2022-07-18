@@ -170,7 +170,7 @@ module.exports = function (RED) {
             var schoolHolidayName = null
 
             for (let i = 0; i < records.length; i++) {
-              if (records[i].fields.population == "-") {
+              if (records[i].fields.population != "Enseignants") {
                 if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
                   isSchoolHoliday = true
                   schoolHolidayName = records[i].description
@@ -179,7 +179,7 @@ module.exports = function (RED) {
               }
             }
             for (let i = 0; i < records.length; i++) {
-              if (records[i].fields.population == "-") {
+              if (records[i].fields.population != "Enseignants") {
                 if ( tomorrow >= Date.parse(records[i].fields.start_date) && tomorrow <= Date.parse(records[i].fields.end_date)){
                   isTomorrowSchoolHoliday = true
                   break;
