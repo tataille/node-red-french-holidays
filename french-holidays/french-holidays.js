@@ -178,9 +178,11 @@ module.exports = function (RED) {
                 }
               }
             }
+            var tomorrowDate = new Date(today);
+            tomorrowDate.setDate(today.getDate() + 1);
             for (let i = 0; i < records.length; i++) {
               if (records[i].fields.population != "Enseignants") {
-                if ( tomorrow >= Date.parse(records[i].fields.start_date) && tomorrow <= Date.parse(records[i].fields.end_date)){
+                if ( tomorrowDate >= Date.parse(records[i].fields.start_date) && tomorrowDate <= Date.parse(records[i].fields.end_date)){
                   isTomorrowSchoolHoliday = true
                   break;
                 }
