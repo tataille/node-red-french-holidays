@@ -297,7 +297,7 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
       isSchoolHolidays: values[1].isSchoolHolidays,
       isTomorrowSchoolHolidays: values[1].isTomorrowSchoolHolidays,
       schoolHolidaysName: values[1].schoolHolidaysName,
-      nextDaysDifference: values[2].daysDifference,
+      nextSchoolHolidaysCoutdownInDays: values[2].daysDifference,
       nextSchoolHolidaysName: values[2].nextHolidayName,
       nextSchoolHolidaysStartDate: values[2].startDate,
       nextSchoolHolidaysEndDate: values[2].endDate,
