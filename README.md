@@ -38,16 +38,21 @@ Retrieves French School Holiday and Public Holiday based on School Academy, geo 
 Data are returned in __msg.payload__
 
 ```json
-day: 0 // day of the week
-isPublicHoliday: true
-isTomorrowPublicHoliday: false
-publicHolidayName: "1er mai"
-nextPublicHolidayName: "8 mai"
-nextPublicHolidayDate: "2022-05-08"
-isSchoolHoliday: false
-isTomorrowSchoolHoliday: false
-schoolHolidayName: null
-year: 2022
+{
+    "day":3,
+    "isPublicHoliday":false,
+    "isTomorrowPublicHoliday":false,
+    "publicHolidayName":null,
+    "nextPublicHolidayName":"Toussaint",
+    "nextPublicHolidayDate":"01/11/2022",
+    "isSchoolHolidays":false,
+    "isTomorrowSchoolHolidays":false,
+    "schoolHolidaysName":null,
+    "nextSchoolHolidaysCoutdownInDays":37,
+    "nextSchoolHolidaysName":"Vacances de la Toussaint","nextSchoolHolidaysStartDate":"21/10/2022",
+    "nextSchoolHolidaysEndDate":"06/11/2022",
+    "year":2022
+}
 ```
 
 ## Examples
