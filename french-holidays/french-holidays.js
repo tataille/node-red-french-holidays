@@ -40,15 +40,16 @@ module.exports = function (RED) {
       
       tomorrow.setDate(today.getDate() + 1);
       tomorrow = toISOLocal(tomorrow).split('T')[0];
-      var year = today.getFullYear()-1
-      var nextYear = year+1
+      var previousYear = today.getFullYear()-1
+      var currentYear = today.getFullYear()
+      var nextYear = currentYear
       var date = toISOLocal(new Date()).split('T')[0]
       var publicHolidayApi =
         'https://calendrier.api.gouv.fr/jours-feries/' + geo[this.geo] + '.json'
       var schoolHolidaysApi =
-        'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.start_date='+year+'&refine.location='+this.academy
+        'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.start_date='+previousYear+'&refine.location='+this.academy
       var entireSchoolHolidaysCalendarApi = 
-      'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+year+'-'+nextYear
+      'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+previousYear+'-'+nextYear
       'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&facet=description&facet=population&facet=start_date&facet=end_date&facet=location&facet=annee_scolaire&refine.start_date=2022&refine.location=Martinique'
       var isPublicHoliday = false
       var publicHolidayName = ''
@@ -63,7 +64,7 @@ module.exports = function (RED) {
         nextPublicHolidayName: null,
         nextPublicHolidayDate: null,
         isSchoolHolidays: null,
-        year: year
+        year: currentYear
       }
       
       promisePublicHoliday = new Promise(function(resolve, reject) {
@@ -130,7 +131,7 @@ module.exports = function (RED) {
                 publicHolidayName: publicHolidayName,
                 nextPublicHolidayName: nextPublicHolidayName,
                 nextPublicHolidayDate: nextPublicHolidayDate,
-                year: year
+                year: currentYear
               }
               resolve(result)
               
@@ -305,7 +306,7 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
       nextSchoolHolidaysName: values[2].nextHolidayName,
       nextSchoolHolidaysStartDate: values[2].startDate,
       nextSchoolHolidaysEndDate: values[2].endDate,
-      year: year
+      year: currentYear
     }
     msg.payload = result
     node.send(msg)
