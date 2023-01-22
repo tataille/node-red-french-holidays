@@ -57,7 +57,7 @@ describe('french-holidays Node', function () {
   }); 
 
 
-it('should make payload contains current year data', function (done) {
+it('should make payload contains previous year data', function (done) {
     
   helper.load(frenchHolidaysNode, flow, function () {
     var n2 = helper.getNode("n2");
@@ -65,7 +65,7 @@ it('should make payload contains current year data', function (done) {
     n2.on("input", function (msg) {
       try {
         today = new Date();
-        msg.payload.should.have.property('year', today.getFullYear());
+        msg.payload.should.have.property('year', today.getFullYear()-1);
         done();
       } catch(err) {
         done(err);

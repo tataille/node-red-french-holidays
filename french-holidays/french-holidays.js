@@ -40,7 +40,7 @@ module.exports = function (RED) {
       
       tomorrow.setDate(today.getDate() + 1);
       tomorrow = toISOLocal(tomorrow).split('T')[0];
-      var year = today.getFullYear()
+      var year = today.getFullYear()-1
       var nextYear = year+1
       var date = toISOLocal(new Date()).split('T')[0]
       var publicHolidayApi =
@@ -233,7 +233,9 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
       res.on('end', () => {
         try {
           var holidayJson = JSON.parse(body)
+          console.log(body)
           var records = holidayJson.records
+          var orderedRecords;
           var schoolHolidaysName = null
           var daysDifference = -1
           var nextHolidayName = null
@@ -254,7 +256,9 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
                 }
             }
           }
-          
+           
+          console.log("daysDifference: "+daysDifference)
+                console.log("holiday  : "+nextHolidayName)
           var result = {
             nextHolidayName: nextHolidayName,
             daysDifference: daysDifference,
