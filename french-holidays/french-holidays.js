@@ -47,10 +47,10 @@ module.exports = function (RED) {
       var publicHolidayApi =
         'https://calendrier.api.gouv.fr/jours-feries/' + geo[this.geo] + '.json'
       var schoolHolidaysApi =
-        'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.start_date='+previousYear+'&refine.location='+this.academy
+        'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.start_date='+currentYear+'&refine.location='+this.academy
       var entireSchoolHolidaysCalendarApi = 
       'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+previousYear+'-'+nextYear
-      'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&facet=description&facet=population&facet=start_date&facet=end_date&facet=location&facet=annee_scolaire&refine.start_date=2022&refine.location=Martinique'
+      'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&facet=description&facet=population&facet=start_date&facet=end_date&facet=location&facet=annee_scolaire&refine.start_date='+previousYear+'&refine.location=Martinique'
       var isPublicHoliday = false
       var publicHolidayName = ''
       var nextPublicHolidayName = ''
