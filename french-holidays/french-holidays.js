@@ -5,6 +5,7 @@ module.exports = function (RED) {
       .sort()
       .reduce((res, key) => ((res[key] = obj[key]), res), {})
 
+  var node = {}
   var geo = {}
   geo['Alsace-Moselle'] = 'alsace-moselle'
   geo['Guadeloupe'] = 'guadeloupe'
@@ -27,12 +28,17 @@ module.exports = function (RED) {
     return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, -1) + sign + z(off / 60 | 0) + ':' + z(off % 60);
   }
 
+  function displayErrorMsg( msg) {
+    node.status({fill:"red",shape:"ring",text: msg});
+    throw new Error(msg);
+  }
+
   function RetrieveFrenchHoliday (config) {
     //retrieve day number
     RED.nodes.createNode(this, config)
     this.academy = config.academy
     this.geo = config.geo
-    var node = this
+    node = this
 
     node.on('input', function (msg, send, done) {
       var today = new Date()
@@ -50,7 +56,6 @@ module.exports = function (RED) {
         'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.start_date='+currentYear+'&refine.location='+this.academy
       var entireSchoolHolidaysCalendarApi = 
       'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+previousYear+'-'+nextYear
-      'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&facet=description&facet=population&facet=start_date&facet=end_date&facet=location&facet=annee_scolaire&refine.start_date='+previousYear+'&refine.location=Martinique'
       var isPublicHoliday = false
       var publicHolidayName = ''
       var nextPublicHolidayName = ''
@@ -71,7 +76,6 @@ module.exports = function (RED) {
       https
         .get(publicHolidayApi, res => {
           let body = ''
-
           res.on('data', chunk => {
             body += chunk
           })
@@ -86,55 +90,59 @@ module.exports = function (RED) {
               const kdates = Object.keys(holidayJson)
               var previousDate = '1970-1-1'
               var nextDate = '1970-1-1'
-              for (let i = 0; i < kdates.length; i++) {
-                currentDate = kdates[i]
-                if (i == kdates.length - 1) {
-                  nextDate = '2100-12-1'
-                } else {
-                  nextDate = kdates[i + 1]
+              if ( kdates) {
+                for (let i = 0; i < kdates.length; i++) {
+                  currentDate = kdates[i]
+                  if (i == kdates.length - 1) {
+                    nextDate = '2100-12-1'
+                  } else {
+                    nextDate = kdates[i + 1]
+                  }
+                  if (currentDate == date) {
+                    isPublicHoliday = true
+                    publicHolidayName = holidayJson[currentDate]
+                    nextPublicHolidayDate = new Date(nextDate).toLocaleDateString('fr')
+                    nextPublicHolidayName = holidayJson[kdates[i + 1]]
+                    break
+                  } else if (currentDate < date && date < nextDate) {
+                    isPublicHoliday = false
+                    publicHolidayName = null
+                    nextPublicHolidayDate = new Date(nextDate).toLocaleDateString('fr')
+                    nextPublicHolidayName = holidayJson[kdates[i + 1]]
+                    break
+                  }
                 }
-                if (currentDate == date) {
-                  isPublicHoliday = true
-                  publicHolidayName = holidayJson[currentDate]
-                  nextPublicHolidayDate = new Date(nextDate).toLocaleDateString('fr')
-                  nextPublicHolidayName = holidayJson[kdates[i + 1]]
-                  break
-                } else if (currentDate < date && date < nextDate) {
-                  isPublicHoliday = false
-                  publicHolidayName = null
-                  nextPublicHolidayDate = new Date(nextDate).toLocaleDateString('fr')
-                  nextPublicHolidayName = holidayJson[kdates[i + 1]]
-                  break
+                //calculate tomorrow
+                var isTomorrowPublicHoliday = false
+                for (let i = 0; i < kdates.length; i++) {
+                  currentDate = kdates[i]
+                  if (i == kdates.length - 1) {
+                    nextDate = '2100-12-1'
+                  } else {
+                    nextDate = kdates[i + 1]
+                  }
+                  if (tomorrow == currentDate) {
+                    isTomorrowPublicHoliday = true
+                    break
+                  } else if (currentDate < tomorrow && tomorrow < nextDate) {
+                    isTomorrowPublicHoliday = false
+                    break
+                  }
                 }
+                var result = {
+                  day: today.getDay(),
+                  isPublicHoliday: isPublicHoliday,
+                  isTomorrowPublicHoliday: isTomorrowPublicHoliday,
+                  publicHolidayName: publicHolidayName,
+                  nextPublicHolidayName: nextPublicHolidayName,
+                  nextPublicHolidayDate: nextPublicHolidayDate,
+                  year: currentYear
+                }
+                resolve(result)
+              }else {
+                displayErrorMsg(  "Public Holiday API returns no record")
               }
-              //calculate tomorrow
-              var isTomorrowPublicHoliday = false
-              for (let i = 0; i < kdates.length; i++) {
-                currentDate = kdates[i]
-                if (i == kdates.length - 1) {
-                  nextDate = '2100-12-1'
-                } else {
-                  nextDate = kdates[i + 1]
-                }
-                if (tomorrow == currentDate) {
-                  isTomorrowPublicHoliday = true
-                  break
-                } else if (currentDate < tomorrow && tomorrow < nextDate) {
-                  isTomorrowPublicHoliday = false
-                  break
-                }
-              }
-              var result = {
-                day: today.getDay(),
-                isPublicHoliday: isPublicHoliday,
-                isTomorrowPublicHoliday: isTomorrowPublicHoliday,
-                publicHolidayName: publicHolidayName,
-                nextPublicHolidayName: nextPublicHolidayName,
-                nextPublicHolidayDate: nextPublicHolidayDate,
-                year: currentYear
-              }
-              resolve(result)
-              
+            
             } catch (error) {
                 if (done) {
                     // Node-RED 1.0 compatible
@@ -143,10 +151,10 @@ module.exports = function (RED) {
                     // Node-RED 0.x compatible
                     node.error(error, msg);
                 }
-                reject(error)
             }
         })
         .on('error', error => {
+            displayErrorMsg(error.message)
             if (done) {
                 // Node-RED 1.0 compatible
                 done(error);
@@ -173,33 +181,35 @@ module.exports = function (RED) {
             var isSchoolHolidays = false
             var isTomorrowSchoolHolidays = false
             var schoolHolidaysName = null
-
-            for (let i = 0; i < records.length; i++) {
-              if (records[i].fields.population != "Enseignants") {
-                if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
-                  isSchoolHolidays = true
-                  schoolHolidaysName = records[i].description
-                  break;
+            if ( records ) {
+              for (let i = 0; i < records.length; i++) {
+                if (records[i].fields.population != "Enseignants") {
+                  if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
+                    isSchoolHolidays = true
+                    schoolHolidaysName = records[i].description
+                    break;
+                  }
                 }
               }
-            }
-            var tomorrowDate = new Date(today);
-            tomorrowDate.setDate(today.getDate() + 1);
-            for (let i = 0; i < records.length; i++) {
-              if (records[i].fields.population != "Enseignants") {
-                if ( tomorrowDate >= Date.parse(records[i].fields.start_date) && tomorrowDate <= Date.parse(records[i].fields.end_date)){
-                  isTomorrowSchoolHolidays = true
-                  break;
+              var tomorrowDate = new Date(today);
+              tomorrowDate.setDate(today.getDate() + 1);
+              for (let i = 0; i < records.length; i++) {
+                if (records[i].fields.population != "Enseignants") {
+                  if ( tomorrowDate >= Date.parse(records[i].fields.start_date) && tomorrowDate <= Date.parse(records[i].fields.end_date)){
+                    isTomorrowSchoolHolidays = true
+                    break;
+                  }
                 }
               }
+              var result = {
+                isSchoolHolidays: isSchoolHolidays,
+                isTomorrowSchoolHolidays: isTomorrowSchoolHolidays,
+                schoolHolidaysName: schoolHolidaysName,
+              }
+              resolve(result)
+            }else {
+              displayErrorMsg("School Holiday API is returning no records")     
             }
-            var result = {
-              isSchoolHolidays: isSchoolHolidays,
-              isTomorrowSchoolHolidays: isTomorrowSchoolHolidays,
-              schoolHolidaysName: schoolHolidaysName,
-            }
-            resolve(result)
-            
           } catch (error) {
               if (done) {
                   // Node-RED 1.0 compatible
@@ -208,10 +218,10 @@ module.exports = function (RED) {
                   // Node-RED 0.x compatible
                   node.error(error, msg);
               }
-              reject(error)
           }
       })
       .on('error', error => {
+          displayErrorMsg(error.message)     
           if (done) {
               // Node-RED 1.0 compatible
               done(error);
@@ -242,33 +252,36 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
           var nextHolidayName = null
           var startDate = null
           var endDate = null
-          for (let i = 0; i < records.length; i++) {
-            var timeDifference = Date.parse(records[i].fields.start_date) - today.getTime();
-            var _daysDifference = timeDifference / (1000 * 3600 * 24);
-            if ( _daysDifference <= 0 ) {
-              //case when the holidays are already passed or start today
+          if (records) {
+            for (let i = 0; i < records.length; i++) {
+              var timeDifference = Date.parse(records[i].fields.start_date) - today.getTime();
+              var _daysDifference = timeDifference / (1000 * 3600 * 24);
+              if ( _daysDifference <= 0 ) {
+                //case when the holidays are already passed or start today
 
-            }else {
-                if (daysDifference == -1 || _daysDifference<daysDifference) {
-                  nextHolidayName = records[i].fields.description
-                  daysDifference = Math.round(_daysDifference)
-                  startDate = new Date(records[i].fields.start_date).toLocaleDateString('fr')
-                  endDate = new Date(records[i].fields.end_date).toLocaleDateString('fr')
-                }
+              }else {
+                  if (daysDifference == -1 || _daysDifference<daysDifference) {
+                    nextHolidayName = records[i].fields.description
+                    daysDifference = Math.round(_daysDifference)
+                    startDate = new Date(records[i].fields.start_date).toLocaleDateString('fr')
+                    endDate = new Date(records[i].fields.end_date).toLocaleDateString('fr')
+                  }
+              }
             }
+            
+            console.log("daysDifference: "+daysDifference)
+                  console.log("holiday  : "+nextHolidayName)
+            var result = {
+              nextHolidayName: nextHolidayName,
+              daysDifference: daysDifference,
+              schoolHolidaysName: schoolHolidaysName,
+              startDate: startDate,
+              endDate: endDate,
+            }
+            resolve(result)
+          }else {
+            displayErrorMsg("School Holiday API for the whole year is returning no records")     
           }
-           
-          console.log("daysDifference: "+daysDifference)
-                console.log("holiday  : "+nextHolidayName)
-          var result = {
-            nextHolidayName: nextHolidayName,
-            daysDifference: daysDifference,
-            schoolHolidaysName: schoolHolidaysName,
-            startDate: startDate,
-            endDate: endDate,
-          }
-          resolve(result)
-          
         } catch (error) {
             if (done) {
                 // Node-RED 1.0 compatible
@@ -277,10 +290,10 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
                 // Node-RED 0.x compatible
                 node.error(error, msg);
             }
-            reject(error)
         }
     })
     .on('error', error => {
+        displayErrorMsg(error.message)
         if (done) {
             // Node-RED 1.0 compatible
             done(error);
