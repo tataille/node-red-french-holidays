@@ -48,14 +48,17 @@ module.exports = function (RED) {
       tomorrow = toISOLocal(tomorrow).split('T')[0];
       var previousYear = today.getFullYear()-1
       var currentYear = today.getFullYear()
-      var nextYear = currentYear
+      console.log("current>>>"+currentYear)
+
+      var nextYear = currentYear+1
+      console.log("nextYear>>>"+nextYear)
       var date = toISOLocal(new Date()).split('T')[0]
       var publicHolidayApi =
         'https://calendrier.api.gouv.fr/jours-feries/' + geo[this.geo] + '.json'
       var schoolHolidaysApi =
         'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.start_date='+currentYear+'&refine.location='+this.academy
       var entireSchoolHolidaysCalendarApi = 
-      'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+previousYear+'-'+nextYear
+      'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+currentYear+'-'+nextYear
       var isPublicHoliday = false
       var publicHolidayName = ''
       var nextPublicHolidayName = ''
