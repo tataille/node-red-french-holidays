@@ -5,7 +5,7 @@ module.exports = function (RED) {
       .sort()
       .reduce((res, key) => ((res[key] = obj[key]), res), {})
 
-  var node = {}
+  //var node = this
   var geo = {}
   geo['Alsace-Moselle'] = 'alsace-moselle'
   geo['Guadeloupe'] = 'guadeloupe'
@@ -38,7 +38,7 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config)
     this.academy = config.academy
     this.geo = config.geo
-    node = this
+    var node = this
 
     node.on('input', function (msg, send, done) {
       var today = new Date()
