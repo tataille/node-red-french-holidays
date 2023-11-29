@@ -5,7 +5,6 @@ module.exports = function (RED) {
       .sort()
       .reduce((res, key) => ((res[key] = obj[key]), res), {})
 
-  //var node = this
   var geo = {}
   geo['Alsace-Moselle'] = 'alsace-moselle'
   geo['Guadeloupe'] = 'guadeloupe'
