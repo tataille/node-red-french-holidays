@@ -56,6 +56,25 @@ describe('french-holidays Node', function () {
     });
   }); 
 
+  it('should make payload contains schoolHolidaysName data', function (done) {
+    
+    helper.load(frenchHolidaysNode, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      n2.on("input", function (msg) {
+        try {
+          today = new Date();
+
+          msg.payload.should.have.property('schoolHolidaysName');
+          done();
+        } catch(err) {
+          done(err);
+        }
+      });
+      n1.receive({ payload: "test" });
+    });
+  });
+
 
 it('should make payload contains year data', function (done) {
     
