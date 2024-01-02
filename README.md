@@ -37,21 +37,25 @@ Retrieves French School Holiday and Public Holiday based on School Academy, geo 
 
 Data are returned in __msg.payload__
 
+Example of result when querying api on January 2 2024 for Academy of Rennes (Metropole)
+
 ```json
 {
-    "day":3,
-    "isPublicHoliday":false,
-    "isTomorrowPublicHoliday":false,
-    "publicHolidayName":null,
-    "nextPublicHolidayName":"Toussaint",
-    "nextPublicHolidayDate":"01/11/2022",
-    "isSchoolHolidays":false,
-    "isTomorrowSchoolHolidays":false,
-    "schoolHolidaysName":null,
-    "nextSchoolHolidaysCoutdownInDays":37,
-    "nextSchoolHolidaysName":"Vacances de la Toussaint","nextSchoolHolidaysStartDate":"21/10/2022",
-    "nextSchoolHolidaysEndDate":"06/11/2022",
-    "year":2022
+  "day": 2,
+  "isPublicHoliday": false,
+  "isTomorrowPublicHoliday": false,
+  "publicHolidayName": null,
+  "nextPublicHolidayName": "Lundi de Pâques",
+  "nextPublicHolidayDate": "01/04/2024",
+  "isSchoolHolidays": true,
+  "isTomorrowSchoolHolidays": true,
+  "schoolHolidaysName": "Vacances de Noël",
+  "nextSchoolHolidaysCoutdownInDays": 52,
+  "nextSchoolHolidaysName": "Vacances d'Hiver",
+  "nextSchoolHolidaysStartDate": "23/02/2024",
+  "nextSchoolHolidaysEndDate": "10/03/2024",
+  "schoolPeriod": "2023-2024",
+  "year": 2024
 }
 ```
 
