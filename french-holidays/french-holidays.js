@@ -61,10 +61,10 @@ module.exports = function (RED) {
       
       retrieveSchoolPeriod(today)
 
-      console.log("beginning year>>>"+beginningYear)
+      console.log("- School Period Beginning year >>>"+beginningYear)
 
       var endYear = beginningYear+1
-      console.log("endYear>>>"+endYear)
+      console.log("- School Period  End Year r>>>"+endYear)
       var date = toISOLocal(new Date()).split('T')[0]
       var publicHolidayApi =
         'https://calendrier.api.gouv.fr/jours-feries/' + geo[this.geo] + '.json'
@@ -193,40 +193,33 @@ module.exports = function (RED) {
         res.on('end', () => {
           try {
             var holidayJson = JSON.parse(body)
-            console.log(body)
+            console.log("# promiseSchoolHolidays Response: "+body)
             var records = holidayJson.records
             var isSchoolHolidays = false
             var isTomorrowSchoolHolidays = false
             var schoolHolidaysName = null
             if ( records ) {
               for (let i = 0; i < records.length; i++) {
-                console.log("- record #: "+i)
-
-                //if (records[i].fields.population != "Enseignants") {
-                  console.log("-- population  #: "+records[i].fields.population)
-
-                  if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
-                    isSchoolHolidays = true
-                    schoolHolidaysName = records[i].fields.description
-                    break;
-                  }
-                //}
+                if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
+                  isSchoolHolidays = true
+                  schoolHolidaysName = records[i].fields.description
+                  break;
+                }
               }
               var tomorrowDate = new Date(today);
               tomorrowDate.setDate(today.getDate() + 1);
               for (let i = 0; i < records.length; i++) {
-                //if (records[i].fields.population != "Enseignants") {
-                  if ( tomorrowDate >= Date.parse(records[i].fields.start_date) && tomorrowDate <= Date.parse(records[i].fields.end_date)){
-                    isTomorrowSchoolHolidays = true
-                    break;
-                  }
-                //}
+                if ( tomorrowDate >= Date.parse(records[i].fields.start_date) && tomorrowDate <= Date.parse(records[i].fields.end_date)){
+                  isTomorrowSchoolHolidays = true
+                  break;
+                }
               }
               var result = {
                 isSchoolHolidays: isSchoolHolidays,
                 isTomorrowSchoolHolidays: isTomorrowSchoolHolidays,
                 schoolHolidaysName: schoolHolidaysName,
               }
+              console.log("- schoolHolidaysName: "+schoolHolidaysName)
               resolve(result)
             }else {
               displayErrorMsg("School Holiday API is returning no records")     
@@ -265,7 +258,7 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
       res.on('end', () => {
         try {
           var holidayJson = JSON.parse(body)
-          console.log(body)
+          console.log("# promiseEntireSchoolHolidaysCalendar Response: "+body)
           var records = holidayJson.records
           var orderedRecords;
           var schoolHolidaysName = null
@@ -290,8 +283,8 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
               }
             }
             
-            console.log("daysDifference: "+daysDifference)
-            console.log("holiday  : "+nextHolidayName)
+            console.log("- daysDifference: "+daysDifference)
+            console.log("- nextHolidayName  : "+nextHolidayName)
             var result = {
               nextHolidayName: nextHolidayName,
               daysDifference: daysDifference,
