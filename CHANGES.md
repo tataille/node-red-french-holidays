@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fix "isSchoolHolidays - Issue with year selection ? #10"
 - Enhance logs
 - Fix issue with field _schoolHolidaysName_ (current school Holidays name)that was always null
-
+- New field _schoolPeriod_ containing current school period with format "< Start of School Period >-< End of School Period >"
 
 ## 1.1.7
 
