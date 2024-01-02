@@ -32,7 +32,7 @@ module.exports = function (RED) {
     throw new Error(msg);
   }
 
-  function RetrieveFrenchHoliday (config) {
+  function retrieveFrenchHoliday (config) {
     //retrieve day number
     RED.nodes.createNode(this, config)
     this.academy = config.academy
@@ -330,5 +330,5 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
   
   })
 }
-  RED.nodes.registerType('french-holidays', RetrieveFrenchHoliday)
+  RED.nodes.registerType('french-holidays', retrieveFrenchHoliday)
 }
