@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## 1.1.9
+
+- Fixed issue:
+  - is school holidays failed #12
+
 ## 1.1.8
 
 - Fix "isSchoolHolidays - Issue with year selection ? #10"

@@ -69,7 +69,7 @@ module.exports = function (RED) {
       var publicHolidayApi =
         'https://calendrier.api.gouv.fr/jours-feries/' + geo[this.geo] + '.json'
       var schoolHolidaysApi =
-        'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.start_date='+beginningYear+'&refine.end_date='+endYear+'&refine.location='+this.academy
+        'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.end_date='+endYear+'&refine.location='+this.academy
       var entireSchoolHolidaysCalendarApi = 
       'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+beginningYear+'-'+endYear
       var isPublicHoliday = false
