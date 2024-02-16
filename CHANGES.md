@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed issue:
   - is school holidays failed #12
+  - Update package references to fix security issues
 
 ## 1.1.8
 
