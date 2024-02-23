@@ -205,10 +205,10 @@ module.exports = function (RED) {
             var schoolHolidaysName = null
             if ( records ) {
               for (let i = 0; i < records.length; i++) {
+                zones = records[i].fields.zones
                 if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
                   isSchoolHolidays = true
                   schoolHolidaysName = records[i].fields.description
-                  zones = records[i].fields.zones
                   break;
                 }
               }

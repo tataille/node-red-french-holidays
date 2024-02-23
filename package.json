@@ -1,10 +1,10 @@
 {
   "name": "@tataille/node-red-french-holidays",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A simple node-red component for working with French holidays.",
   "bugs": "https://github.com/tataille/node-red-french-holidays/issues",
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 14.0.0"
   },
   "keywords": [
     "node-red",
