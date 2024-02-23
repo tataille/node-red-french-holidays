@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.0
+
+- Add new fields for debug purpose:
+  - Package version - field __version__
+  - Academy - field __academy__
+  - Region - field __region__
+  - Zones - fied __zones__
 
 ## 1.1.9
 

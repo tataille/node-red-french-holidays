@@ -1,25 +1,29 @@
 module.exports = function (RED) {
   const https = require('https')
+  
+  const { version } = require('../package.json');
+
   const sortDates = obj =>
     Object.keys(obj)
       .sort()
       .reduce((res, key) => ((res[key] = obj[key]), res), {})
 
-  var currentYear
-  
-  var geo = {}
-  geo['Alsace-Moselle'] = 'alsace-moselle'
-  geo['Guadeloupe'] = 'guadeloupe'
-  geo['La Réunion'] = 'la-reunion'
-  geo['Martinique'] = 'martinique'
-  geo['Mayotte'] = 'mayotte'
-  geo['Métropole'] = 'metropole'
-  geo['Nouvelle Calédonie'] = 'nouvelle-caledonie'
-  geo['Polynésie Française'] = 'polyneise-francaise'
-  geo['Saint Barthélémy'] = 'saint-barthelemy'
-  geo['Saint Martin'] = 'saint-martin'
-  geo['Saint Pierre et Miquelon'] = 'saint-pierre-et-miquelon'
-  geo['Wallis et Futuna'] = 'wallis-et-futuna'
+  var currentYear;
+  var region;
+
+  var geoMap = {}
+  geoMap['Alsace-Moselle'] = 'alsace-moselle'
+  geoMap['Guadeloupe'] = 'guadeloupe'
+  geoMap['La Réunion'] = 'la-reunion'
+  geoMap['Martinique'] = 'martinique'
+  geoMap['Mayotte'] = 'mayotte'
+  geoMap['Métropole'] = 'metropole'
+  geoMap['Nouvelle Calédonie'] = 'nouvelle-caledonie'
+  geoMap['Polynésie Française'] = 'polyneise-francaise'
+  geoMap['Saint Barthélémy'] = 'saint-barthelemy'
+  geoMap['Saint Martin'] = 'saint-martin'
+  geoMap['Saint Pierre et Miquelon'] = 'saint-pierre-et-miquelon'
+  geoMap['Wallis et Futuna'] = 'wallis-et-futuna'
 
   function toISOLocal(d) {
     const z = n => ('0' + n).slice(-2);
@@ -67,7 +71,7 @@ module.exports = function (RED) {
       console.log("- School Period  End Year r>>>"+endYear)
       var date = toISOLocal(new Date()).split('T')[0]
       var publicHolidayApi =
-        'https://calendrier.api.gouv.fr/jours-feries/' + geo[this.geo] + '.json'
+        'https://calendrier.api.gouv.fr/jours-feries/' + geoMap[this.geo] + '.json'
       var schoolHolidaysApi =
         'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.end_date='+endYear+'&refine.location='+this.academy
       var entireSchoolHolidaysCalendarApi = 
@@ -196,6 +200,7 @@ module.exports = function (RED) {
             console.log("# promiseSchoolHolidays Response: "+body)
             var records = holidayJson.records
             var isSchoolHolidays = false
+            var zones = "Non disponible"
             var isTomorrowSchoolHolidays = false
             var schoolHolidaysName = null
             if ( records ) {
@@ -203,6 +208,7 @@ module.exports = function (RED) {
                 if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
                   isSchoolHolidays = true
                   schoolHolidaysName = records[i].fields.description
+                  zones = records[i].fields.zones
                   break;
                 }
               }
@@ -218,6 +224,7 @@ module.exports = function (RED) {
                 isSchoolHolidays: isSchoolHolidays,
                 isTomorrowSchoolHolidays: isTomorrowSchoolHolidays,
                 schoolHolidaysName: schoolHolidaysName,
+                zones: zones
               }
               console.log("- schoolHolidaysName: "+schoolHolidaysName)
               resolve(result)
@@ -334,7 +341,11 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
       nextSchoolHolidaysStartDate: values[2].startDate,
       nextSchoolHolidaysEndDate: values[2].endDate,
       schoolPeriod: beginningYear+'-'+endYear,
-      year: currentYear
+      year: currentYear,
+      region: this.geo,
+      academy: this.academy,
+      zones: values[1].zones,
+      version: version
     }
     msg.payload = result
     node.send(msg)

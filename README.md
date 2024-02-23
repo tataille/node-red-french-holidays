@@ -41,7 +41,7 @@ Example of result when querying api on January 2 2024 for Academy of Rennes (Met
 
 ```json
 {
-  "day": 2,
+  "day": 5,
   "isPublicHoliday": false,
   "isTomorrowPublicHoliday": false,
   "publicHolidayName": null,
@@ -49,13 +49,17 @@ Example of result when querying api on January 2 2024 for Academy of Rennes (Met
   "nextPublicHolidayDate": "01/04/2024",
   "isSchoolHolidays": true,
   "isTomorrowSchoolHolidays": true,
-  "schoolHolidaysName": "Vacances de Noël",
-  "nextSchoolHolidaysCoutdownInDays": 52,
-  "nextSchoolHolidaysName": "Vacances d'Hiver",
-  "nextSchoolHolidaysStartDate": "23/02/2024",
-  "nextSchoolHolidaysEndDate": "10/03/2024",
+  "schoolHolidaysName": "Vacances d'Hiver",
+  "nextSchoolHolidaysCoutdownInDays": 49,
+  "nextSchoolHolidaysName": "Vacances de Printemps",
+  "nextSchoolHolidaysStartDate": "12/04/2024",
+  "nextSchoolHolidaysEndDate": "28/04/2024",
   "schoolPeriod": "2023-2024",
-  "year": 2024
+  "year": 2024,
+  "region": "Métropole",
+  "academy": "Clermont-Ferrand",
+  "zones": "Zone A",
+  "version": "1.2.0"
 }
 ```
 
