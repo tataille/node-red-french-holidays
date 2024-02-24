@@ -23,9 +23,16 @@ Using the Node Red palette manager.
 
 Alternatively, run the following command in your Node-RED user directory - typically `~/.node-red`
 
+
 ```bash
-npm install node-red-french-holidays
+npm install npm i @tataille/node-red-french-holidays@X.X.X
 ```
+
+### Update
+
+Use the node-red palette manager to update the module. 
+
+![assets](https://github.com/tataille/node-red-french-holidays/blob/main/assets/node-update.gif)
 
 ## Usage
 
