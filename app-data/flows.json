@@ -1,0 +1,314 @@
+[
+    {
+        "id": "59b8c1f4183c9197",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "d3371463c5c7e155",
+        "type": "inject",
+        "z": "59b8c1f4183c9197",
+        "name": "invoke",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "34372dff634501a8"
+            ]
+        ]
+    },
+    {
+        "id": "b29b1b28abcfd295",
+        "type": "switch",
+        "z": "59b8c1f4183c9197",
+        "name": "",
+        "property": "day-info.isSchoolHolidays",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 190,
+        "y": 460,
+        "wires": [
+            [
+                "91cad8c3e847738c"
+            ],
+            [
+                "1e891c8f59490309"
+            ]
+        ]
+    },
+    {
+        "id": "cbf6476bad64933d",
+        "type": "inject",
+        "z": "59b8c1f4183c9197",
+        "name": "Test",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 170,
+        "y": 400,
+        "wires": [
+            [
+                "b29b1b28abcfd295"
+            ]
+        ]
+    },
+    {
+        "id": "91cad8c3e847738c",
+        "type": "debug",
+        "z": "59b8c1f4183c9197",
+        "name": "is School Holiday",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "$globalContext(\"day-info\")",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "7b2060ccee5932ce",
+        "type": "debug",
+        "z": "59b8c1f4183c9197",
+        "name": "is not a Weekend and not a Holiday",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "$globalContext(\"day-info\")",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "c6bbd038ec22e064",
+        "type": "comment",
+        "z": "59b8c1f4183c9197",
+        "name": "Example for usage in switch node",
+        "info": "",
+        "x": 220,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "7d36d98b53c64b58",
+        "type": "comment",
+        "z": "59b8c1f4183c9197",
+        "name": "once on Node-Red start",
+        "info": "",
+        "x": 470,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "62c9860ad64d2d5f",
+        "type": "change",
+        "z": "59b8c1f4183c9197",
+        "name": "Store Holidays in context ",
+        "rules": [
+            {
+                "t": "set",
+                "p": "day-info",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 730,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1e891c8f59490309",
+        "type": "switch",
+        "z": "59b8c1f4183c9197",
+        "name": "",
+        "property": "day-info.isPublicHoliday",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 190,
+        "y": 520,
+        "wires": [
+            [
+                "677797c2f7bcb3d2"
+            ],
+            [
+                "d88debded16f7c16"
+            ]
+        ]
+    },
+    {
+        "id": "677797c2f7bcb3d2",
+        "type": "debug",
+        "z": "59b8c1f4183c9197",
+        "name": "is Public Holiday",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "$globalContext(\"day-info\")",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "d88debded16f7c16",
+        "type": "switch",
+        "z": "59b8c1f4183c9197",
+        "name": "",
+        "property": "day-info.day",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "6",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 190,
+        "y": 580,
+        "wires": [
+            [
+                "08db052087e131ec"
+            ],
+            [
+                "08db052087e131ec"
+            ],
+            [
+                "7b2060ccee5932ce"
+            ]
+        ]
+    },
+    {
+        "id": "08db052087e131ec",
+        "type": "debug",
+        "z": "59b8c1f4183c9197",
+        "name": "Week-end",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "$globalContext(\"day-info\")",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "853db6a3381c88d4",
+        "type": "catch",
+        "z": "59b8c1f4183c9197",
+        "name": "",
+        "scope": null,
+        "uncaught": false,
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "ea4e9cd92b942a01"
+            ]
+        ]
+    },
+    {
+        "id": "ea4e9cd92b942a01",
+        "type": "debug",
+        "z": "59b8c1f4183c9197",
+        "name": "Process Error...",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "34372dff634501a8",
+        "type": "french-holidays",
+        "z": "59b8c1f4183c9197",
+        "name": "",
+        "academy": "Rennes",
+        "geo": "Métropole",
+        "x": 440,
+        "y": 200,
+        "wires": [
+            [
+                "62c9860ad64d2d5f"
+            ]
+        ]
+    }
+]
