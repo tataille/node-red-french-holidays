@@ -203,12 +203,14 @@ module.exports = function (RED) {
             var zones = "Non disponible"
             var isTomorrowSchoolHolidays = false
             var schoolHolidaysName = null
+            var schoolHolidaysEndDate = null
             if ( records ) {
               for (let i = 0; i < records.length; i++) {
                 zones = records[i].fields.zones
                 if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
                   isSchoolHolidays = true
                   schoolHolidaysName = records[i].fields.description
+                  schoolHolidaysEndDate = new Date(records[i].fields.end_date).toLocaleDateString('fr')
                   break;
                 }
               }
@@ -224,9 +226,10 @@ module.exports = function (RED) {
                 isSchoolHolidays: isSchoolHolidays,
                 isTomorrowSchoolHolidays: isTomorrowSchoolHolidays,
                 schoolHolidaysName: schoolHolidaysName,
+                schoolHolidaysEndDate: schoolHolidaysEndDate,
                 zones: zones
               }
-              console.log("- schoolHolidaysName: "+schoolHolidaysName)
+              console.log("- schoolHolidaysName: "+schoolHolidaysName+" ending on "+schoolHolidaysEndDate)
               resolve(result)
             }else {
               displayErrorMsg("School Holiday API is returning no records")     
@@ -336,6 +339,7 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
       isSchoolHolidays: values[1].isSchoolHolidays,
       isTomorrowSchoolHolidays: values[1].isTomorrowSchoolHolidays,
       schoolHolidaysName: values[1].schoolHolidaysName,
+      schoolHolidaysEndDate: values[1].schoolHolidaysEndDate,
       nextSchoolHolidaysCoutdownInDays: values[2].daysDifference,
       nextSchoolHolidaysName: values[2].nextHolidayName,
       nextSchoolHolidaysStartDate: values[2].startDate,

@@ -44,7 +44,7 @@ Retrieves French School Holiday and Public Holiday based on School Academy, geo 
 
 Data are returned in __msg.payload__
 
-Example of result when querying api on January 2 2024 for Academy of Rennes (Metropole)
+Example of result when querying api on January 2 2024 for Academy of Clermont-Ferrand (Metropole)
 
 ```json
 {
@@ -55,6 +55,7 @@ Example of result when querying api on January 2 2024 for Academy of Rennes (Met
   "nextPublicHolidayName": "Lundi de Pâques",
   "nextPublicHolidayDate": "01/04/2024",
   "isSchoolHolidays": true,
+  "schoolHolidaysEndDate": "03/03/2024"
   "isTomorrowSchoolHolidays": true,
   "schoolHolidaysName": "Vacances d'Hiver",
   "nextSchoolHolidaysCoutdownInDays": 49,
@@ -84,28 +85,47 @@ Example of result when querying api on January 2 2024 for Academy of Rennes (Met
 
 Due to the fact the plugin interact with external APIs provided by French government, external errors (missing records, connection errors..) are thrown to the node-red core. To handle the exceptions and program a new query, a __catch__ block must be added to the __node-red__ flow. Error details can be found in the exception message payload.
 
-## Development
+## Development Environment setup
 
-Start a __node-red__ container.
+Here are the steps to successfully setup your development environment to contribute to this project
+
+Setup using the VS Code dev container
+This will set up a docker container with all the required tools and dependencies to get started.
+
+* Go to the [node-red-french-holidays](https://github.com/tataille/node-red-french-holidays) repository and fork it.
+
+* Clone your forked repository to your local machine.
+
+* Open the project in VS Code.
+
+* Install the [Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+
+* Click the green button in the lower-left corner of the window that says "Reopen in Container".
+
+* Wait for the container to build and start.
+
+* Open a terminal in VS Code and run "node-red"  to start the __node-red__  server.
+
 
 ```bash
-    docker run -it -p 1880:1880 -v node_red_data:/data -v $(pwd):/node-red-french-holidays --name nodered nodered/node-red
+    node-red
 ```
 
-Then connect your VS Code into __nodered__ container
+To stop the __node-red__ server, just enter "ctrl-c" in VS Code terminal where the __node-red__ server run.
 
-To install the module in "debug" mode
+To install the module in __debug__ mode, open a terminal in VS Code and run commands:
 
 ```bash
 cd /data/
-npm install /node-red-french-holidays/
+npm install /workspaces/node-red-french-holidays/
+node-red
 ```
+
 
 To start the tests
 
 ```bash
-cd /node-red-french-holidays
+cd /workspaces/node-red-french-holidays
 npm test
 ```
 
-Then restart node-red container
