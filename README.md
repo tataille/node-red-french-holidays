@@ -25,7 +25,7 @@ Alternatively, run the following command in your Node-RED user directory - typic
 
 
 ```bash
-npm install npm i @tataille/node-red-french-holidays@X.X.X
+npm install @tataille/node-red-french-holidays@X.X.X
 ```
 
 ### Update
