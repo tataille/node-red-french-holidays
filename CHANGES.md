@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.3
+
+- Update pacakges to fix security issues
+
 ## 1.2.2
 
 - New field for current holidays end date __schoolHolidaysEndDate__
