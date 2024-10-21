@@ -100,7 +100,7 @@ Here is an example of [Home Assistant](https://www.home-assistant.io/) integrati
     {
         "id": "eca4106e44139140",
         "type": "tab",
-        "label": "Flux 1",
+        "label": "HASS French Holidays Integration",
         "disabled": false,
         "info": "",
         "env": []
