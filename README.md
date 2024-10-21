@@ -84,3 +84,135 @@ Example of result when querying api on January 2 2024 for Academy of Clermont-Fe
 ### Error handling
 
 Due to the fact the plugin interact with external APIs provided by French government, external errors (missing records, connection errors..) are thrown to the node-red core. To handle the exceptions and program a new query, a __catch__ block must be added to the __node-red__ flow. Error details can be found in the exception message payload.
+
+## Home Assistant Integration
+
+Here is an example of [Home Assistant](https://www.home-assistant.io/) integration using Mqtt & Markdown Card.
+
+![alt text](assets/hass-integration.png)
+
+### Node-red flow
+
+![](assets/node-red-hass.png)
+
+```json
+[
+    {
+        "id": "eca4106e44139140",
+        "type": "tab",
+        "label": "Flux 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "cb07494d2b31865d",
+        "type": "french-holidays",
+        "z": "eca4106e44139140",
+        "name": "French Holidays",
+        "academy": "Rennes",
+        "geo": "Métropole",
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "767f764a21ed6daf"
+            ]
+        ]
+    },
+    {
+        "id": "767f764a21ed6daf",
+        "type": "mqtt out",
+        "z": "eca4106e44139140",
+        "name": "publish holidays",
+        "topic": "home/holidays",
+        "qos": "1",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "application/json",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f5fe21bb87d5456d",
+        "x": 540,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "8050191babab6736",
+        "type": "inject",
+        "z": "eca4106e44139140",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 260,
+        "wires": [
+            [
+                "cb07494d2b31865d"
+            ]
+        ]
+    },
+    {
+        "id": "f5fe21bb87d5456d",
+        "type": "mqtt-broker",
+        "name": "docker mosquitto",
+        "broker": "mosquitto",
+        "port": "1883",
+        "tls": "",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "5",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    }
+]
+```
+
+### Home Assistant Sensor
+
+First open your sensor configuration file and add mqtt sensor:
+
+```yaml
+mqtt:
+  sensor:
+    - name: "frenchDaysData"
+      state_topic: "home/holidays"
+      value_template: '{{ value_json.schoolHolidaysName }}'
+      json_attributes_topic: "home/holidays"
+      json_attributes_template: '{{ value_json | tojson  }}' 
+```
+
+### Markdown
+
+Add a [Markdown Card](https://www.home-assistant.io/dashboards/markdown/) on your dashboard and add the following code.
+
+```javascript
+{% if states.sensor.frenchdaysdata.attributes.isSchoolHolidays %}
+__{{ states.sensor.frenchdaysdata.attributes.schoolHolidaysName }}__ en cours, fin le __{{ states.sensor.frenchdaysdata.attributes.schoolHolidaysEndDate }}__.
+{% endif %}
+Prochain Férié, le __{{ states.sensor.frenchdaysdata.attributes.nextPublicHolidayDate }}__, __{{ states.sensor.frenchdaysdata.attributes.nextPublicHolidayName }}__.
+{% if states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysName %}
+Les prochaines Vacances scolaires pour la __{{ states.sensor.frenchdaysdata.attributes.zones }}__ sont les __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysName }}__ du __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysStartDate }}__ au __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysEndDate }}__.
+{% endif %}
+
+```
+
