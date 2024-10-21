@@ -55,7 +55,7 @@ Example of result when querying api on January 2 2024 for Academy of Clermont-Fe
   "nextPublicHolidayName": "Lundi de Pâques",
   "nextPublicHolidayDate": "01/04/2024",
   "isSchoolHolidays": true,
-  "schoolHolidaysEndDate": "03/03/2024"
+  "schoolHolidaysEndDate": "03/03/2024",
   "isTomorrowSchoolHolidays": true,
   "schoolHolidaysName": "Vacances d'Hiver",
   "nextSchoolHolidaysCoutdownInDays": 49,

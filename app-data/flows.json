@@ -307,8 +307,25 @@
         "y": 200,
         "wires": [
             [
-                "62c9860ad64d2d5f"
+                "62c9860ad64d2d5f",
+                "91589a183fe28f78"
             ]
         ]
+    },
+    {
+        "id": "91589a183fe28f78",
+        "type": "debug",
+        "z": "59b8c1f4183c9197",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
     }
 ]

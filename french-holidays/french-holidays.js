@@ -72,8 +72,6 @@ module.exports = function (RED) {
       var date = toISOLocal(new Date()).split('T')[0]
       var publicHolidayApi =
         'https://calendrier.api.gouv.fr/jours-feries/' + geoMap[this.geo] + '.json'
-      var schoolHolidaysApi =
-        'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=zones&facet=annee_scolaire&refine.end_date='+endYear+'&refine.location='+this.academy
       var entireSchoolHolidaysCalendarApi = 
       'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location='+this.academy+'&refine.annee_scolaire='+beginningYear+'-'+endYear
       var isPublicHoliday = false
@@ -185,77 +183,6 @@ module.exports = function (RED) {
         })
     })
   })
-  promiseSchoolHolidays = new Promise(function(resolve, reject) {
-    https
-      .get(schoolHolidaysApi, res => {
-        let body = ''
-
-        res.on('data', chunk => {
-          body += chunk
-        })
-
-        res.on('end', () => {
-          try {
-            var holidayJson = JSON.parse(body)
-            console.log("# promiseSchoolHolidays Response: "+body)
-            var records = holidayJson.records
-            var isSchoolHolidays = false
-            var zones = "Non disponible"
-            var isTomorrowSchoolHolidays = false
-            var schoolHolidaysName = null
-            var schoolHolidaysEndDate = null
-            if ( records ) {
-              for (let i = 0; i < records.length; i++) {
-                zones = records[i].fields.zones
-                if ( Date.parse(records[i].fields.start_date) <= today  && today <= Date.parse(records[i].fields.end_date)){
-                  isSchoolHolidays = true
-                  schoolHolidaysName = records[i].fields.description
-                  schoolHolidaysEndDate = new Date(records[i].fields.end_date).toLocaleDateString('fr')
-                  break;
-                }
-              }
-              var tomorrowDate = new Date(today);
-              tomorrowDate.setDate(today.getDate() + 1);
-              for (let i = 0; i < records.length; i++) {
-                if ( tomorrowDate >= Date.parse(records[i].fields.start_date) && tomorrowDate <= Date.parse(records[i].fields.end_date)){
-                  isTomorrowSchoolHolidays = true
-                  break;
-                }
-              }
-              var result = {
-                isSchoolHolidays: isSchoolHolidays,
-                isTomorrowSchoolHolidays: isTomorrowSchoolHolidays,
-                schoolHolidaysName: schoolHolidaysName,
-                schoolHolidaysEndDate: schoolHolidaysEndDate,
-                zones: zones
-              }
-              console.log("- schoolHolidaysName: "+schoolHolidaysName+" ending on "+schoolHolidaysEndDate)
-              resolve(result)
-            }else {
-              displayErrorMsg("School Holiday API is returning no records")     
-            }
-          } catch (error) {
-              if (done) {
-                  // Node-RED 1.0 compatible
-                  done(error);
-              } else {
-                  // Node-RED 0.x compatible
-                  node.error(error, msg);
-              }
-          }
-      })
-      .on('error', error => {
-          displayErrorMsg(error.message)     
-          if (done) {
-              // Node-RED 1.0 compatible
-              done(error);
-          } else {
-              // Node-RED 0.x compatible
-              node.error(error, msg);
-          }
-      })
-  })
-})
 promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
   https
     .get(entireSchoolHolidaysCalendarApi, res => {
@@ -274,33 +201,48 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
           var schoolHolidaysName = null
           var daysDifference = -1
           var nextHolidayName = null
+          var isSchoolHolidays = false
+          var isTomorrowSchoolHolidays = false
           var startDate = null
           var endDate = null
+          var zones = null
           if (records) {
-            for (let i = 0; i < records.length; i++) {
+            for (let i = 0; i < records.length; i ++) {
               var timeDifference = Date.parse(records[i].fields.start_date) - today.getTime();
               var _daysDifference = timeDifference / (1000 * 3600 * 24);
+              zones = records[i].fields.zones
               if ( _daysDifference <= 0 ) {
-                //case when the holidays are already passed or start today
-
-              }else {
-                  if (daysDifference == -1 || _daysDifference<daysDifference) {
-                    nextHolidayName = records[i].fields.description
-                    daysDifference = Math.round(_daysDifference)
-                    startDate = new Date(records[i].fields.start_date).toLocaleDateString('fr')
-                    endDate = new Date(records[i].fields.end_date).toLocaleDateString('fr')
+                    //case when the holidays are already passed or start today
+                    isSchoolHolidays = true
+                    schoolHolidaysName = records[i].fields.description
+                    schoolHolidaysEndDate = new Date(records[i].fields.end_date).toLocaleDateString('fr')
+                    var tomorrowDate = new Date(today);
+                    tomorrowDate.setDate(today.getDate() + 1);
+                    if ( tomorrowDate >= Date.parse(records[i].fields.start_date) && tomorrowDate <= Date.parse(records[i].fields.end_date)){
+                      isTomorrowSchoolHolidays = true
+                    }
+                  }else {
+                    if (daysDifference == -1 || _daysDifference<daysDifference) {
+                      nextHolidayName = records[i].fields.description
+                      daysDifference = Math.round(_daysDifference)
+                      startDate = new Date(records[i].fields.start_date).toLocaleDateString('fr')
+                      endDate = new Date(records[i].fields.end_date).toLocaleDateString('fr')
+                    }
                   }
-              }
             }
             
             console.log("- daysDifference: "+daysDifference)
             console.log("- nextHolidayName  : "+nextHolidayName)
             var result = {
+              isSchoolHolidays: isSchoolHolidays,
+              schoolHolidaysName: schoolHolidaysName,
+              schoolHolidaysEndDate: schoolHolidaysEndDate,
+              isTomorrowSchoolHolidays: isTomorrowSchoolHolidays,
               nextHolidayName: nextHolidayName,
               daysDifference: daysDifference,
-              schoolHolidaysName: schoolHolidaysName,
               startDate: startDate,
               endDate: endDate,
+              zones: zones,
             }
             resolve(result)
           }else {
@@ -328,7 +270,7 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
     })
 })
 })
-  Promise.all([promisePublicHoliday,promiseSchoolHolidays,promiseEntireSchoolHolidaysCalendar]).then((values) => {
+  Promise.all([promisePublicHoliday,promiseEntireSchoolHolidaysCalendar]).then((values) => {
     result =  {
       day: today.getDay(),
       isPublicHoliday: values[0].isPublicHoliday,
@@ -340,10 +282,10 @@ promiseEntireSchoolHolidaysCalendar = new Promise(function(resolve, reject) {
       isTomorrowSchoolHolidays: values[1].isTomorrowSchoolHolidays,
       schoolHolidaysName: values[1].schoolHolidaysName,
       schoolHolidaysEndDate: values[1].schoolHolidaysEndDate,
-      nextSchoolHolidaysCoutdownInDays: values[2].daysDifference,
-      nextSchoolHolidaysName: values[2].nextHolidayName,
-      nextSchoolHolidaysStartDate: values[2].startDate,
-      nextSchoolHolidaysEndDate: values[2].endDate,
+      nextSchoolHolidaysCoutdownInDays: values[1].daysDifference,
+      nextSchoolHolidaysName: values[1].nextHolidayName,
+      nextSchoolHolidaysStartDate: values[1].startDate,
+      nextSchoolHolidaysEndDate: values[1].endDate,
       schoolPeriod: beginningYear+'-'+endYear,
       year: currentYear,
       region: this.geo,
