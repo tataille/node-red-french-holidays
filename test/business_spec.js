@@ -143,8 +143,8 @@ describe('computePublicHoliday', function () {
     var TOMORROW = new Date(TODAY);
     TOMORROW.setDate(TODAY.getDate() + 1);
 
-    const TOMORROW_DATE = toISOLocal(TOMORROW).split('T')[0];
-    const TODAY_DATE = toISOLocal(TODAY).split('T')[0];
+    const TOMORROW_DATE = TOMORROW.toISOString().split('T')[0];
+    const TODAY_DATE = TODAY.toISOString().split('T')[0];
 
     const result = computePublicHoliday(TODAY_DATE, TOMORROW_DATE, RECORD, {
       day: TODAY.getDay(),
@@ -155,7 +155,6 @@ describe('computePublicHoliday', function () {
       nextPublicHolidayDate: undefined,
       year: CURRENT_YEAR
     })
-    console.log(result)
     result.isPublicHoliday.should.equal(false);
     result.isTomorrowPublicHoliday.should.equal(false);
     should.not.exist(result.publicHolidayName);
@@ -173,8 +172,8 @@ describe('computePublicHoliday', function () {
     var TOMORROW = new Date(TODAY);
     TOMORROW.setDate(TODAY.getDate() + 1);
 
-    const TOMORROW_DATE = toISOLocal(TOMORROW).split('T')[0];
-    const TODAY_DATE = toISOLocal(TODAY).split('T')[0];
+    const TOMORROW_DATE = TOMORROW.toISOString().split('T')[0];
+    const TODAY_DATE = TODAY.toISOString().split('T')[0];
 
     const result = computePublicHoliday(TODAY_DATE, TOMORROW_DATE, RECORD, {
       day: TODAY.getDay(),
@@ -203,8 +202,8 @@ describe('computePublicHoliday', function () {
     var TOMORROW = new Date(TODAY);
     TOMORROW.setDate(TODAY.getDate() + 1);
 
-    const TOMORROW_DATE = toISOLocal(TOMORROW).split('T')[0];
-    const TODAY_DATE = toISOLocal(TODAY).split('T')[0];
+    const TOMORROW_DATE = TOMORROW.toISOString().split('T')[0];
+    const TODAY_DATE = TODAY.toISOString().split('T')[0];
 
     const result = computePublicHoliday(TODAY_DATE, TOMORROW_DATE, RECORD, {
       day: TODAY.getDay(),
@@ -233,8 +232,8 @@ describe('computePublicHoliday', function () {
     var TOMORROW = new Date(TODAY);
     TOMORROW.setDate(TODAY.getDate() + 1);
 
-    const TOMORROW_DATE = toISOLocal(TOMORROW).split('T')[0];
-    const TODAY_DATE = toISOLocal(TODAY).split('T')[0];
+    const TOMORROW_DATE = TOMORROW.toISOString().split('T')[0];
+    const TODAY_DATE = TODAY.toISOString().split('T')[0];
 
     const result = computePublicHoliday(TODAY_DATE, TOMORROW_DATE, RECORD, {
       day: TODAY.getDay(),
@@ -263,8 +262,8 @@ describe('computePublicHoliday', function () {
     var TOMORROW = new Date(TODAY);
     TOMORROW.setDate(TODAY.getDate() + 1);
 
-    const TOMORROW_DATE = toISOLocal(TOMORROW).split('T')[0];
-    const TODAY_DATE = toISOLocal(TODAY).split('T')[0];
+    const TOMORROW_DATE = TOMORROW.toISOString().split('T')[0];
+    const TODAY_DATE = TODAY.toISOString().split('T')[0];
 
     const result = computePublicHoliday(TODAY_DATE, TOMORROW_DATE, RECORD, {
       day: TODAY.getDay(),
