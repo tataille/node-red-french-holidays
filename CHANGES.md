@@ -3,9 +3,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.5
+
+- Fix Issue https://github.com/tataille/node-red-french-holidays/issues/17
+
 ## 1.2.4
 
-- Fix Le nœud ne renvoi pas les vacances scolaires en cours. #16
+- Fix Le nœud ne renvoi pas les vacances scolaires en cours. https://github.com/tataille/node-red-french-holidays/issues/16
 
 ## 1.2.3
 
