@@ -43,7 +43,7 @@ function computeSchoolHoliday(day,record, result) {
   } else {
     //next holidays
     const diff = getDayDifference(day, start_date)
-    if (diff > 0) {
+    if (diff > 0 && !result.nextHolidayName) {
       result.nextHolidayName = record.description
       result.daysDifference = getDayDifference(day, start_date)
       result.startDate = start_date.toLocaleDateString(LOCALE_CODE)

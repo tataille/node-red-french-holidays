@@ -94,7 +94,7 @@ module.exports = function (RED) {
               try {
                 var holidayJson = JSON.parse(body)
                 console.log("# promiseEntireSchoolHolidaysCalendar Response: " + body)
-                var records = holidayJson.records
+                var records = holidayJson.records.sort((a, b) => new Date(a.fields.start_date) - new Date(b.fields.start_date))
 
                 var result = {
                   isSchoolHolidays: false,
