@@ -5,7 +5,7 @@ require("node-red-node-test-helper");
 
 describe('computeSchoolHoliday', function () {
   
-  it('Bug #20', function () {
+  it('Test Issue #20', function () {
     const RECORD = {
       start_date: "2025-07-05",
       end_date: "2025-08-29",
