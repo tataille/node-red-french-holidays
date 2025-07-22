@@ -6,6 +6,10 @@ describe('getDayDifference', function () {
   it('should return correct difference', function () {
     getDayDifference(new Date("2024-11-04"), new Date("2024-11-05")).should.equal(1);
   });
+  it('should return correct difference', function () {
+    ("-> "+getDayDifference(new Date(2024,11,4,1,5,0,0), new Date(2024,11,5,0,0,0,0)))
+    getDayDifference(new Date(2024,11,4,1,5,0,0), new Date(2024,11,5,0,0,0,0)).should.equal(1);
+  });
 });
 
 describe('isInPeriod', function () {

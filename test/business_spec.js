@@ -4,6 +4,36 @@ const {toISOLocal}=require("../french-holidays/util")
 require("node-red-node-test-helper");
 
 describe('computeSchoolHoliday', function () {
+  
+  it('Test Issue #20', function () {
+    const RECORD = {
+      start_date: "2025-07-05",
+      end_date: "2025-08-29",
+      zones: "B",
+      description: "description"
+    }
+    const result = computeSchoolHoliday(new Date(2025,6,4,1,5,0,0), RECORD, {
+      isSchoolHolidays: false,
+      schoolHolidaysName: undefined,
+      schoolHolidaysEndDate: undefined,
+      isTomorrowSchoolHolidays: false,
+      nextHolidayName: undefined,
+      daysDifference: -1,
+      startDate: undefined,
+      endDate: undefined,
+      zones: undefined,
+    })
+
+    result.isSchoolHolidays.should.equal(false);
+    result.schoolHolidaysName.should.equal("description");
+    result.schoolHolidaysEndDate.should.equal('29/08/2025');
+
+    result.isTomorrowSchoolHolidays.should.equal(true);
+
+    should.not.exist(result.nextHolidayName);
+    result.daysDifference.should.equal(-1);
+  });
+
   it('should be holidays', function () {
     const RECORD = {
       start_date: "2024-11-01",
@@ -11,6 +41,7 @@ describe('computeSchoolHoliday', function () {
       zones: "C",
       description: "description"
     }
+
     const result = computeSchoolHoliday(new Date("2024-11-10"), RECORD, {
       isSchoolHolidays: false,
       schoolHolidaysName: undefined,
