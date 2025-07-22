@@ -12,7 +12,7 @@ describe('computeSchoolHoliday', function () {
       zones: "B",
       description: "description"
     }
-    const result = computeSchoolHoliday(new Date("2025-07-04"), RECORD, {
+    const result = computeSchoolHoliday(new Date(2025,6,4,1,5,0,0), RECORD, {
       isSchoolHolidays: false,
       schoolHolidaysName: undefined,
       schoolHolidaysEndDate: undefined,

@@ -29,13 +29,15 @@ function computeSchoolHoliday(day,record, result) {
   const end_date =  new Date(Date.parse(record.end_date))
 
   result.zones = record.zones
-  if (isInPeriod(day, start_date, end_date)) {
+  const res = isInPeriod(day, start_date, end_date)
+  if (res) {
     //Today
     result.isSchoolHolidays = true
     result.schoolHolidaysName = record.description
     result.schoolHolidaysEndDate = end_date.toLocaleDateString(LOCALE_CODE)
   } 
-  if (isInPeriod(tomorrowDate, start_date, end_date)) {
+  const res2 =isInPeriod(tomorrowDate, start_date, end_date)
+  if (res2) {
     //tomorrow
     result.isTomorrowSchoolHolidays = true
     result.schoolHolidaysName = record.description

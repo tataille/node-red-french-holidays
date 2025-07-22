@@ -8,10 +8,11 @@ function displayErrorMsg(msg) {
     throw new Error(msg);
 }
 
-// Difference between 2 dates
 function getDayDifference(day, target) {
-    let timeDifference = target.getTime() - day.getTime();
-    return Math.floor(timeDifference / (1000 * 3600 * 24));
+    let start = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+    let end = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+    let timeDifference = end - start;
+    return Math.round(timeDifference / (1000 * 3600 * 24));
 }
 
 // Define if it is a part of period

@@ -24,7 +24,6 @@ module.exports = function (RED) {
 
       const beginningYear = retrieveSchoolPeriod(TODAY)
       const endYear = beginningYear + 1
-      //console.log(`- School Period >>> ${beginningYear}-${endYear}`)
 
       const PUBLIC_HOLIDAY_API = `https://calendrier.api.gouv.fr/jours-feries/${GEO_MAP[this.geo]}.json`
       const FULL_SCHOOL_CALENDAR_API = `https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location=${this.academy}&refine.annee_scolaire=${beginningYear}-${endYear}`
@@ -40,7 +39,6 @@ module.exports = function (RED) {
             res.on('end', () => {
               try {
                 var holidayJson = JSON.parse(body)
-                console.log("# promisePublicHoliday Response: " + body)
                 if (holidayJson) {
                   let result = {
                     day: TODAY.getDay(),
@@ -93,7 +91,7 @@ module.exports = function (RED) {
             res.on('end', () => {
               try {
                 var holidayJson = JSON.parse(body)
-                console.log("# promiseEntireSchoolHolidaysCalendar Response: " + body)
+                ("# promiseEntireSchoolHolidaysCalendar Response: " + body)
                 var records = holidayJson.records.sort((a, b) => new Date(a.fields.start_date) - new Date(b.fields.start_date))
 
                 var result = {
@@ -113,8 +111,8 @@ module.exports = function (RED) {
                     result = computeSchoolHoliday(TODAY, records[i].fields, result)
                   }
 
-                  //console.log("- daysDifference: " + result.daysDifference)
-                  //console.log("- nextHolidayName  : " + result.nextHolidayName)
+                  //("- daysDifference: " + result.daysDifference)
+                  //("- nextHolidayName  : " + result.nextHolidayName)
 
                   resolve(result)
                 } else {
