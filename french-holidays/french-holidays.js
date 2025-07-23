@@ -91,7 +91,6 @@ module.exports = function (RED) {
             res.on('end', () => {
               try {
                 var holidayJson = JSON.parse(body)
-                ("# promiseEntireSchoolHolidaysCalendar Response: " + body)
                 var records = holidayJson.records.sort((a, b) => new Date(a.fields.start_date) - new Date(b.fields.start_date))
 
                 var result = {
