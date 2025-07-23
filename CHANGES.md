@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.7
+
+- Fix Error while parsing JSON
+
+
+## 1.2.6
+
+- Fix Issue https://github.com/tataille/node-red-french-holidays/issues/20
+
 ## 1.2.5
 
 - Fix Issue https://github.com/tataille/node-red-french-holidays/issues/17
