@@ -28,6 +28,17 @@ module.exports = function (RED) {
       const PUBLIC_HOLIDAY_API = `https://calendrier.api.gouv.fr/jours-feries/${GEO_MAP[this.geo]}.json`
       const FULL_SCHOOL_CALENDAR_API = `https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location=${this.academy}&refine.annee_scolaire=${beginningYear}-${endYear}`
 
+      const handleError = error => {
+        displayErrorMsg(error.message)
+        if (done) {
+          // Node-RED 1.0 compatible
+          done(error)
+        } else {
+          // Node-RED 0.x compatible
+          node.error(error, msg)
+        }
+      }
+
       const promisePublicHoliday = new Promise(function (resolve, reject) {
         https
           .get(PUBLIC_HOLIDAY_API, res => {
@@ -56,28 +67,11 @@ module.exports = function (RED) {
                 }
 
               } catch (error) {
-                if (done) {
-                  // Node-RED 1.0 compatible
-                  done(error);
-                } else {
-                  // Node-RED 0.x compatible
-                  node.error(error, msg);
-                }
                 reject(error)
               }
             })
-              .on('error', error => {
-                displayErrorMsg(error.message)
-                if (done) {
-                  // Node-RED 1.0 compatible
-                  done(error);
-                } else {
-                  // Node-RED 0.x compatible
-                  node.error(error, msg);
-                }
-                reject(error)
-              })
-          })
+              .on('error', reject)
+          }).on('error', reject)
       })
       const promiseEntireSchoolHolidaysCalendar = new Promise(function (resolve, reject) {
         https
@@ -119,33 +113,16 @@ module.exports = function (RED) {
                   reject({ message: "School Holiday API for the whole year is returning no records" })
                 }
               } catch (error) {
-                if (done) {
-                  // Node-RED 1.0 compatible
-                  done(error);
-                } else {
-                  // Node-RED 0.x compatible
-                  node.error(error, msg);
-                }
                 reject(error)
               }
             })
-              .on('error', error => {
-                displayErrorMsg(error.message)
-                if (done) {
-                  // Node-RED 1.0 compatible
-                  done(error);
-                } else {
-                  // Node-RED 0.x compatible
-                  node.error(error, msg);
-                }
-                reject(error)
-              })
-          })
+              .on('error', reject)
+          }).on('error', reject)
       })
 
       Promise.all([promisePublicHoliday, promiseEntireSchoolHolidaysCalendar])
         .then((values) => {
-          result = {
+          const result = {
             day: TODAY.getDay(),
             isPublicHoliday: values[0].isPublicHoliday,
             isTomorrowPublicHoliday: values[0].isTomorrowPublicHoliday,
@@ -169,9 +146,11 @@ module.exports = function (RED) {
           }
           msg.payload = result
           node.send(msg)
-        }).catch((error) => {
-          console.error(error.message);
-        });
+          if (done) {
+            done()
+          }
+        })
+        .catch(handleError);
     })
   }
   RED.nodes.registerType('french-holidays', retrieveFrenchHoliday)
