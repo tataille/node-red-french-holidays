@@ -77,7 +77,15 @@ module.exports = function (RED) {
                 }
                 reject(error)
               })
-          })
+          }).on('error', error => {
+            displayErrorMsg(error.message)
+            if (done) {
+              // Node-RED 1.0 compatible
+              done(error);
+            } else {
+              // Node-RED 0.x compatible
+              node.error(error, msg);
+            }
       })
       const promiseEntireSchoolHolidaysCalendar = new Promise(function (resolve, reject) {
         https
@@ -140,6 +148,16 @@ module.exports = function (RED) {
                 }
                 reject(error)
               })
+          }).on('error', error => {
+            displayErrorMsg(error.message)
+            if (done) {
+              // Node-RED 1.0 compatible
+              done(error);
+            } else {
+              // Node-RED 0.x compatible
+              node.error(error, msg);
+            }
+            reject(error)
           })
       })
 
