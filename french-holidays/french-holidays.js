@@ -86,6 +86,8 @@ module.exports = function (RED) {
               // Node-RED 0.x compatible
               node.error(error, msg);
             }
+            reject(error)
+          })
       })
       const promiseEntireSchoolHolidaysCalendar = new Promise(function (resolve, reject) {
         https
