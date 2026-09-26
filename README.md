@@ -59,6 +59,7 @@ Example of result when querying api on January 2 2024 for Academy of Clermont-Fe
   "isTomorrowSchoolHolidays": true,
   "schoolHolidaysName": "Vacances d'Hiver",
   "nextSchoolHolidaysCoutdownInDays": 49,
+  "nextSchoolHolidaysCountdownInDays": 49,  
   "nextSchoolHolidaysName": "Vacances de Printemps",
   "nextSchoolHolidaysStartDate": "12/04/2024",
   "nextSchoolHolidaysEndDate": "28/04/2024",
@@ -67,9 +68,45 @@ Example of result when querying api on January 2 2024 for Academy of Clermont-Fe
   "region": "Métropole",
   "academy": "Clermont-Ferrand",
   "zones": "Zone A",
-  "version": "1.2.0"
+  "version": "1.2.9"
 }
 ```
+
+### Output properties
+
+The node returns the following properties in `msg.payload`:
+
+| Property | Type | Description |
+|---|---|---|
+| `day` | number | Current day of the week: `0` for Sunday to `6` for Saturday |
+| `isPublicHoliday` | boolean | Indicates whether today is a public holiday |
+| `isTomorrowPublicHoliday` | boolean | Indicates whether tomorrow is a public holiday |
+| `publicHolidayName` | string | Name of today's public holiday |
+| `nextPublicHolidayName` | string | Name of the next public holiday |
+| `nextPublicHolidayDate` | string | Date of the next public holiday in `DD/MM/YYYY` format |
+| `isSchoolHolidays` | boolean | Indicates whether today is during school holidays |
+| `isTomorrowSchoolHolidays` | boolean | Indicates whether tomorrow is during school holidays |
+| `schoolHolidaysName` | string | Name of the current school holiday period |
+| `schoolHolidaysEndDate` | string | End date of the current school holiday period |
+| `nextSchoolHolidaysCountdownInDays` | number | Number of days before the next school holiday period |
+| `nextSchoolHolidaysName` | string | Name of the next school holiday period |
+| `nextSchoolHolidaysStartDate` | string | Start date of the next school holiday period |
+| `nextSchoolHolidaysEndDate` | string | End date of the next school holiday period |
+| `schoolPeriod` | string | Current school year, for example `2026-2027` |
+| `year` | number | Current calendar year |
+| `region` | string | Selected geographical area |
+| `academy` | string | Selected French school academy |
+| `zones` | string | School holiday zone associated with the academy |
+| `version` | string | Installed version of the node |
+
+> [!NOTE]
+> Starting with version `1.3.0`, use
+> `nextSchoolHolidaysCountdownInDays`.
+>
+> The former misspelled property
+> `nextSchoolHolidaysCoutdownInDays` remains available for backward
+> compatibility. Existing Node-RED flows therefore continue to work,
+> but users are encouraged to migrate to the corrected property name.
 
 ## Examples
 

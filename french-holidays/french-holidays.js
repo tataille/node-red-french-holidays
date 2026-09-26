@@ -133,8 +133,10 @@ module.exports = function (RED) {
             isTomorrowSchoolHolidays: values[1].isTomorrowSchoolHolidays,
             schoolHolidaysName: values[1].schoolHolidaysName,
             schoolHolidaysEndDate: values[1].schoolHolidaysEndDate,
+              // Deprecated: kept for backward compatibility
             nextSchoolHolidaysCoutdownInDays: values[1].daysDifference,
-            nextSchoolHolidaysName: values[1].nextHolidayName,
+            nextSchoolHolidaysCountdownInDays: values[1].daysDifference,
+            nextSchoolHolidaysName: values[1].nextHolidayName,            
             nextSchoolHolidaysStartDate: values[1].startDate,
             nextSchoolHolidaysEndDate: values[1].endDate,
             schoolPeriod: beginningYear + '-' + endYear,
