@@ -3,9 +3,12 @@
 */
 
 // Display error in NodeRed
-function displayErrorMsg(msg) {
-    node.status({ fill: "red", shape: "ring", text: msg });
-    throw new Error(msg);
+function displayErrorMsg(node, msg) {
+  node.status({
+    fill: 'red',
+    shape: 'ring',
+    text: msg
+  })
 }
 
 function getDayDifference(day, target) {

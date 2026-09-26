@@ -29,7 +29,7 @@ module.exports = function (RED) {
       const FULL_SCHOOL_CALENDAR_API = `https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-calendrier-scolaire&q=&rows=100&facet=description&facet=start_date&facet=end_date&facet=location&facet=zones&refine.location=${this.academy}&refine.annee_scolaire=${beginningYear}-${endYear}`
 
       const handleError = error => {
-        displayErrorMsg(error.message)
+        displayErrorMsg(node, error.message)
         if (done) {
           // Node-RED 1.0 compatible
           done(error)
