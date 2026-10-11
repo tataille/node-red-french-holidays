@@ -2,6 +2,11 @@
 
 [English](README.md) | [Français](README.fr.md)
 
+> [!NOTE]
+> **French Holidays is now available as a native Home Assistant integration!**
+> Get 23 entities for French public holidays and school holidays, without Node-RED or MQTT.
+> [Manual installation](#native-home-assistant-integration) · [Version 0.1.2](https://github.com/tataille/homeassistant-french-holidays/releases/tag/v0.1.2) · [Documentation](https://github.com/tataille/homeassistant-french-holidays)
+
 [![Node.js CI](https://github.com/tataille/node-red-french-holidays/actions/workflows/node.js.yml/badge.svg)](https://github.com/tataille/node-red-french-holidays/actions/workflows/node.js.yml)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/tataille/node-red-french-holidays/graphs/commit-activity)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -122,7 +127,32 @@ The node returns the following properties in `msg.payload`:
 
 ## Native Home Assistant integration
 
-A native Python port is available: [French Holidays for Home Assistant](https://github.com/tataille/homeassistant-french-holidays). Install it through HACS as a custom integration, with 23 entities and no Node-RED or MQTT requirement. The Node-RED/MQTT example below remains available for existing flows.
+French Holidays is also available as a [native Home Assistant integration](https://github.com/tataille/homeassistant-french-holidays), ported from this module to Python.
+
+Select your academy and public holiday region in the Home Assistant UI. Its **23 entities** provide today's and tomorrow's public holiday status, current school holidays, upcoming dates and countdowns. Use them for alarm clocks, heating, shutters or your dashboard.
+
+### Manual installation — no HACS required
+
+Requirements: **Home Assistant 2026.1 or later**, access to its configuration directory, and an Internet connection for the initial calendar download.
+
+1. [Download the version 0.1.2 ZIP](https://github.com/tataille/homeassistant-french-holidays/releases/download/v0.1.2/homeassistant-french-holidays-v0.1.2.zip) from the [GitHub release](https://github.com/tataille/homeassistant-french-holidays/releases/tag/v0.1.2).
+2. Extract the archive.
+3. Copy `custom_components/french_holidays` into the `custom_components` directory of your Home Assistant configuration. Create that directory if needed.
+4. Check that the file is located at `/config/custom_components/french_holidays/manifest.json`.
+5. Restart Home Assistant.
+6. Open **Settings → Devices & services → Add integration**, search for **French Holidays**, then select your academy and public holiday region.
+
+With **Home Assistant Docker**, use the host directory mounted at `/config`. Copy only the `french_holidays` directory, without adding an extra directory level.
+
+The integration works independently. Existing MQTT sensors and flow automations are not migrated automatically: update their entity references if you switch to the native integration.
+
+School calendar dates are currently interpreted in Europe/Paris; Nantes is the tested configuration and overseas academies still need verification.
+
+Installation through HACS as a **custom repository** is also available. [The request for inclusion in the default HACS catalogue is awaiting review](https://github.com/hacs/default/pull/11829).
+
+[Read the complete documentation](https://github.com/tataille/homeassistant-french-holidays).
+
+The Node-RED module remains available; the Node-RED/MQTT example below can still be used.
 
 ## Home Assistant Integration
 
