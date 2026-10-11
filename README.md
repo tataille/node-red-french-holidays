@@ -120,6 +120,10 @@ The node returns the following properties in `msg.payload`:
 [{"id":"d88debded16f7c16","type":"switch","z":"59b8c1f4183c9197","name":"","property":"day-info.day","propertyType":"global","rules":[{"t":"eq","v":"0","vt":"str"},{"t":"eq","v":"6","vt":"str"},{"t":"else"}],"checkall":"false","repair":false,"outputs":3,"x":190,"y":580,"wires":[["08db052087e131ec"],["08db052087e131ec"],["7b2060ccee5932ce"]]}]
 ```
 
+## Native Home Assistant integration
+
+A native Python port is available: [French Holidays for Home Assistant](https://github.com/tataille/homeassistant-french-holidays). Install it through HACS as a custom integration, with 23 entities and no Node-RED or MQTT requirement. The Node-RED/MQTT example below remains available for existing flows.
+
 ## Home Assistant Integration
 
 Here is an example of [Home Assistant](https://www.home-assistant.io/) integration using Mqtt & Markdown Card.
