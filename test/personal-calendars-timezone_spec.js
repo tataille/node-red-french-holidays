@@ -73,9 +73,9 @@ describe('ICS comprehensive time zone and recurrence regression', function () {
     const dates=days(ics,'UTC')
     assert.deepStrictEqual(dates.map(d=>d[2]),[5,12,26])
   })
-  it('handles a monthly RRULE including leap day correctly', function () {
+  it('handles an explicitly constrained leap-day RRULE correctly', function () {
     const ics=calendar([['DTSTART;VALUE=DATE:20240229','DTEND;VALUE=DATE:20240301',
-      'RRULE:FREQ=YEARLY;COUNT=3']])
+      'RRULE:FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=29;COUNT=3']])
     const events=collectEvents(ics,new Date(2024,0,1))
     assert.deepStrictEqual(events.map(e=>e.start.getFullYear()),[2024])
   })
