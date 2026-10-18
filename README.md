@@ -285,3 +285,41 @@ Les prochaines Vacances scolaires pour la __{{ states.sensor.frenchdaysdata.attr
 
 ```
 
+
+
+## Personal ICS calendars (optional)
+
+Add one or more personal calendars to the node's **Personal calendars (ICS)** configuration field.
+Enter a JSON array (or leave `[]` to disable this feature):
+
+```json
+[
+  {"name": "Parents", "type": "url", "source": "https://example.org/private.ics"},
+  {"name": "Children", "type": "file", "source": "/data/children.ics", "filter": "Holiday"}
+]
+```
+
+- `type`: `url` for HTTPS calendar subscriptions, `file` for a local .ics file accessible from the Node-RED runtime/container.
+- `source`: full URL or absolute file path; `name`: friendly calendar name.
+- `filter`: optional case-insensitive keyword matched against ICS event titles.
+- `enabled: false`: temporarily disable a calendar.
+- Downloaded content is cached in memory for 12 hours and stale content is used if an update fails. Local files use the same cache lifetime. Individual failed calendars produce a node warning; official holiday output continues normally.
+- **Privacy**: ICS subscription URLs may contain private tokens. They are stored in the Node-RED flow configuration; protect flow exports, editor access and backups. Only subscribe to trusted URLs.
+- Repeated events, recurrence exclusions, and ICS all-day exclusive end dates are supported. An event with clock times counts for every calendar day it overlaps. Time-zone processing follows the host Node-RED runtime.
+- If several personal calendars overlap, `isPersonalHolidays` is true whenever at least one event is in progress.
+
+Additional fields in `msg.payload`:
+
+| Property | Type | Meaning |
+|---|---|---|
+| `isPersonalHolidays` | boolean | An imported event is active today |
+| `isTomorrowPersonalHolidays` | boolean | An imported event is active tomorrow |
+| `personalHolidaysName` | string/null | Titles of current events |
+| `personalHolidaysEndDate` | string/null | Last end date of current events |
+| `nextPersonalHolidaysName` | string/null | Next upcoming event |
+| `nextPersonalHolidaysStartDate` | string/null | Next start date (DD/MM/YYYY) |
+| `nextPersonalHolidaysEndDate` | string/null | Next end date (DD/MM/YYYY) |
+| `nextPersonalHolidaysCountdownInDays` | number/null | Days before next event |
+| `personalCalendars` | array | Per-calendar summaries including `name`; calendar failures include an `error` |
+
+Previously available output fields are unchanged.
