@@ -27,7 +27,8 @@
   "author": "Jean-Marc TAILLANT",
   "license": "Apache-2.0",
   "dependencies": {
-    "node-fetch": "^3.2.4"
+    "node-fetch": "^3.2.4",
+    "ical.js": "^1.5.0"
   },
   "devDependencies": {
     "mocha": "^10.0.0",
