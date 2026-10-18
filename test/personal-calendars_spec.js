@@ -41,4 +41,32 @@ describe('personal ICS calendars', function () {
     const events = collectEvents(ics, today)
     assert.strictEqual(events.length, 3)
   })
+  it('skips recurrence exclusions (EXDATE)', function () {
+    const ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0',
+      'BEGIN:VEVENT', 'UID:except', 'DTSTART;VALUE=DATE:20261018',
+      'DTEND;VALUE=DATE:20261019', 'RRULE:FREQ=DAILY;COUNT=4',
+      'EXDATE;VALUE=DATE:20261019', 'SUMMARY:Days off',
+      'END:VEVENT', 'END:VCALENDAR'
+    ].join('\\r\\n')
+    const events = collectEvents(ics, today)
+    assert.strictEqual(events.length, 3)
+    assert.strictEqual(compute(events, new Date(2026, 9, 19)).isPersonalHolidays, false)
+  })
+  it('applies RECURRENCE-ID moved occurrences', function () {
+    const ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0',
+      'BEGIN:VEVENT', 'UID:moved', 'DTSTART;VALUE=DATE:20261018',
+      'DTEND;VALUE=DATE:20261019', 'RRULE:FREQ=DAILY;COUNT=2',
+      'SUMMARY:Original', 'END:VEVENT',
+      'BEGIN:VEVENT', 'UID:moved', 'RECURRENCE-ID;VALUE=DATE:20261019',
+      'DTSTART;VALUE=DATE:20261022', 'DTEND;VALUE=DATE:20261023',
+      'SUMMARY:Moved', 'END:VEVENT', 'END:VCALENDAR'
+    ].join('\\r\\n')
+    const events = collectEvents(ics, today)
+    assert.strictEqual(events.length, 2)
+    assert.strictEqual(compute(events, new Date(2026, 9, 19)).isPersonalHolidays, false)
+    assert.strictEqual(compute(events, new Date(2026, 9, 22)).personalHolidaysName, 'Moved')
+  })
+
 })
