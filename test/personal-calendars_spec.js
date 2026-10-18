@@ -48,7 +48,7 @@ describe('personal ICS calendars', function () {
       'DTEND;VALUE=DATE:20261019', 'RRULE:FREQ=DAILY;COUNT=4',
       'EXDATE;VALUE=DATE:20261019', 'SUMMARY:Days off',
       'END:VEVENT', 'END:VCALENDAR'
-    ].join('\\r\\n')
+    ].join('\r\n')
     const events = collectEvents(ics, today)
     assert.strictEqual(events.length, 3)
     assert.strictEqual(compute(events, new Date(2026, 9, 19)).isPersonalHolidays, false)
@@ -62,7 +62,7 @@ describe('personal ICS calendars', function () {
       'BEGIN:VEVENT', 'UID:moved', 'RECURRENCE-ID;VALUE=DATE:20261019',
       'DTSTART;VALUE=DATE:20261022', 'DTEND;VALUE=DATE:20261023',
       'SUMMARY:Moved', 'END:VEVENT', 'END:VCALENDAR'
-    ].join('\\r\\n')
+    ].join('\r\n')
     const events = collectEvents(ics, today)
     assert.strictEqual(events.length, 2)
     assert.strictEqual(compute(events, new Date(2026, 9, 19)).isPersonalHolidays, false)
