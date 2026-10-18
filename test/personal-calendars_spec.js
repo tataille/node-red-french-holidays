@@ -75,9 +75,9 @@ describe('personal ICS calendars', function () {
     function check(tz, icsLines, expected) {
       const script = [
         'const { collectEvents } = require(' + JSON.stringify(path.resolve(__dirname, '../french-holidays/personal-calendars')) + ');',
-        'const events = collectEvents(' + JSON.stringify(icsLines.join('\\r\\n')) + ', new Date(2026, 0, 1));',
+        'const events = collectEvents(' + JSON.stringify(icsLines.join('\r\n')) + ', new Date(2026, 0, 1));',
         'process.stdout.write(JSON.stringify(events.map(e => ({start:e.start.getFullYear()+"-"+(e.start.getMonth()+1)+"-"+e.start.getDate(),end:e.end.getFullYear()+"-"+(e.end.getMonth()+1)+"-"+e.end.getDate()}))));'
-      ].join('\\n')
+      ].join('\n')
       const actual = JSON.parse(execFileSync(process.execPath, ['-e', script], {
         env: { ...process.env, TZ: tz }, encoding: 'utf8'
       }))
