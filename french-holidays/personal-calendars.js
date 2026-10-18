@@ -62,13 +62,32 @@ function dayDiff(from, to) {
 function isoDay(date) {
   return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
 }
-function eventInterval(start, end, allDay) {
-  // For all-day ICS events DTEND is exclusive, as required by RFC 5545.
-  // For timed events, any touched calendar day is treated as a personal holiday.
-  const first = localDay(start)
-  const lastInstant = new Date(end.getTime() - 1)
-  const last = localDay(lastInstant)
-  if (!Number.isFinite(first.getTime()) || !Number.isFinite(last.getTime()) || last < first) return null
+function calendarDate(time, jsDate) {
+  // VALUE=DATE and explicit TZID events use the calendar's civil dates.
+  // UTC/floating timestamps without an explicit calendar zone retain runtime-local semantics.
+  const zone = time && time.zone && time.zone.tzid
+  if (time && (time.isDate || (zone && zone !== 'UTC' && zone !== 'floating'))) {
+    return new Date(time.year, time.month - 1, time.day)
+  }
+  return localDay(jsDate)
+}
+function eventInterval(start, end, startTime, endTime) {
+  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) return null
+  const first = calendarDate(startTime, start)
+  // The exclusive end instant is used for timed events.
+  // For explicit TZID and VALUE=DATE, determine the last calendar day from
+  // the ICS wall time, avoiding a host TZ-dependent conversion.
+  let last
+  const zone = endTime && endTime.zone && endTime.zone.tzid
+  if (endTime && (endTime.isDate || (zone && zone !== 'UTC' && zone !== 'floating'))) {
+    last = calendarDate(endTime, end)
+    if (endTime.isDate || (endTime.hour === 0 && endTime.minute === 0 && endTime.second === 0)) {
+      last.setDate(last.getDate() - 1)
+    }
+  } else {
+    last = localDay(new Date(end.getTime() - 1))
+  }
+  if (last < first) return null
   return { start: first, end: last }
 }
 function collectEvents(ics, today) {
@@ -96,7 +115,7 @@ function collectEvents(ics, today) {
       const start = details.startDate.toJSDate()
       const end = details.endDate.toJSDate()
       if (end <= begin || start >= horizon) return
-      const interval = eventInterval(start, end, details.startDate.isDate)
+      const interval = eventInterval(start, end, details.startDate, details.endDate)
       if (interval) output.push({ ...interval, name: String(details.item.summary || 'Personal holiday') })
     }
     if (!event.isRecurring()) {
