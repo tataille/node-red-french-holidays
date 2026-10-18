@@ -69,4 +69,67 @@ describe('personal ICS calendars', function () {
     assert.strictEqual(compute(events, new Date(2026, 9, 22)).personalHolidaysName, 'Moved')
   })
 
+  describe('time zones and daylight saving (Europe/Paris)', function () {
+    const { execFileSync } = require('child_process')
+    const path = require('path')
+    function check(tz, icsLines, expected) {
+      const script = [
+        'const { collectEvents } = require(' + JSON.stringify(path.resolve(__dirname, '../french-holidays/personal-calendars')) + ');',
+        'const events = collectEvents(' + JSON.stringify(icsLines.join('\\r\\n')) + ', new Date(2026, 0, 1));',
+        'process.stdout.write(JSON.stringify(events.map(e => ({start:e.start.getFullYear()+"-"+(e.start.getMonth()+1)+"-"+e.start.getDate(),end:e.end.getFullYear()+"-"+(e.end.getMonth()+1)+"-"+e.end.getDate()}))));'
+      ].join('\\n')
+      const actual = JSON.parse(execFileSync(process.execPath, ['-e', script], {
+        env: { ...process.env, TZ: tz }, encoding: 'utf8'
+      }))
+      assert.deepStrictEqual(actual, expected)
+    }
+    function event(start, end) {
+      return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT',
+        'UID:dst-test', start, end, 'SUMMARY:Timezone test',
+        'END:VEVENT', 'END:VCALENDAR']
+    }
+    it('keeps an all-day event on the same dates in UTC and Paris', function () {
+      const lines = event('DTSTART;VALUE=DATE:20260329', 'DTEND;VALUE=DATE:20260331')
+      const expected = [{start:'2026-3-29', end:'2026-3-30'}]
+      check('Europe/Paris', lines, expected)
+      check('UTC', lines, expected)
+    })
+    it('handles Europe/Paris spring clock change with UTC timestamps', function () {
+      const lines = event('DTSTART:20260328T233000Z', 'DTEND:20260329T013000Z')
+      check('Europe/Paris', lines, [{start:'2026-3-29',end:'2026-3-29'}])
+    })
+    it('handles Europe/Paris autumn repeated hour with UTC timestamps', function () {
+      const lines = event('DTSTART:20261025T003000Z', 'DTEND:20261025T023000Z')
+      check('Europe/Paris', lines, [{start:'2026-10-25',end:'2026-10-25'}])
+    })
+    it('handles timed events spanning midnight at spring transition', function () {
+      const lines = event('DTSTART:20260328T223000Z', 'DTEND:20260329T003000Z')
+      check('Europe/Paris', lines, [{start:'2026-3-28',end:'2026-3-29'}])
+    })
+    it('keeps recurring all-day dates stable across the spring transition', function () {
+      const lines = ['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
+        'UID:dst-recurring','DTSTART;VALUE=DATE:20260328','DTEND;VALUE=DATE:20260329',
+        'RRULE:FREQ=DAILY;COUNT=3','SUMMARY:Leave',
+        'END:VEVENT','END:VCALENDAR']
+      const expected = [{start:'2026-3-28',end:'2026-3-28'},
+        {start:'2026-3-29',end:'2026-3-29'},
+        {start:'2026-3-30',end:'2026-3-30'}]
+      check('Europe/Paris', lines, expected)
+      check('UTC', lines, expected)
+    })
+    it('resolves explicit TZID with a VTIMEZONE across spring DST', function () {
+      const lines = ['BEGIN:VCALENDAR','VERSION:2.0',
+        'BEGIN:VTIMEZONE','TZID:Europe/Paris',
+        'BEGIN:DAYLIGHT','DTSTART:19700329T020000','TZOFFSETFROM:+0100',
+        'TZOFFSETTO:+0200','RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU','END:DAYLIGHT',
+        'BEGIN:STANDARD','DTSTART:19701025T030000','TZOFFSETFROM:+0200',
+        'TZOFFSETTO:+0100','RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU','END:STANDARD',
+        'END:VTIMEZONE','BEGIN:VEVENT','UID:tzid-dst',
+        'DTSTART;TZID=Europe/Paris:20260329T013000',
+        'DTEND;TZID=Europe/Paris:20260329T033000','SUMMARY:Clock change',
+        'END:VEVENT','END:VCALENDAR']
+      check('Europe/Paris', lines, [{start:'2026-3-29',end:'2026-3-29'}])
+    })
+  })
+
 })
