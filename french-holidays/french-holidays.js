@@ -4,6 +4,7 @@ module.exports = function (RED) {
   const { retrieveSchoolPeriod, computePublicHoliday, computeSchoolHoliday } = require("./business")
   const { version } = require('../package.json');
   const { GEO_MAP } = require("./constant")
+  const { loadCalendars, blank } = require("./personal-calendars")
 
 
   function retrieveFrenchHoliday(config) {
@@ -11,6 +12,7 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config)
     this.academy = config.academy
     this.geo = config.geo
+    this.personalCalendars = config.personalCalendars || "[]"
     var node = this
 
     node.on('input', function (msg, send, done) {
@@ -120,7 +122,7 @@ module.exports = function (RED) {
           }).on('error', reject)
       })
 
-      Promise.all([promisePublicHoliday, promiseEntireSchoolHolidaysCalendar])
+      Promise.all([promisePublicHoliday, promiseEntireSchoolHolidaysCalendar, loadCalendars(this.personalCalendars, TODAY, message => node.warn(message)).catch(error => { node.warn("Personal calendars: " + error.message); return blank() })])
         .then((values) => {
           const result = {
             day: TODAY.getDay(),
@@ -144,6 +146,7 @@ module.exports = function (RED) {
             region: this.geo,
             academy: this.academy,
             zones: values[1].zones,
+            ...values[2],
             version: version
           }
           msg.payload = result
