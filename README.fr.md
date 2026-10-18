@@ -277,3 +277,81 @@ Prochain jour férié : __{{ states.sensor.frenchdaysdata.attributes.nextPublicH
 Les prochaines vacances scolaires pour la __{{ states.sensor.frenchdaysdata.attributes.zones }}__ sont les __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysName }}__, du __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysStartDate }}__ au __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysEndDate }}__.
 {% endif %}
 ```
+
+ 
+## Calendriers ICS personnels (optionnel)
+
+Le nœud peut importer **plusieurs calendriers de congés ou de vacances familiales** sans modifier les paramètres existants des jours fériés et des vacances scolaires.
+
+Dans la configuration du nœud French Holidays, renseignez le champ **Personal calendars (ICS)** avec un tableau JSON. La valeur `[]` désactive cette fonctionnalité facultative.
+
+```json
+[
+  {
+    "name": "Parents",
+    "type": "url",
+    "source": "https://calendrier.exemple.fr/prive/parents.ics",
+    "filter": "Vacances"
+  },
+  {
+    "name": "Enfants",
+    "type": "file",
+    "source": "/data/calendriers/enfants.ics"
+  }
+]
+```
+
+| Paramètre | Obligatoire | Description |
+|---|---|---|
+| `name` | Oui | Nom du calendrier (parents, enfants…) |
+| `type` | Oui | `url` (abonnement HTTPS) ou `file` (fichier local) |
+| `source` | Oui | URL HTTPS ou chemin absolu accessible au processus/conteneur Node-RED |
+| `filter` | Non | Filtre insensible à la casse sur le titre des événements. **Sans filtre, tous les événements sont considérés comme des vacances personnelles.** |
+| `enabled` | Non | `false` pour désactiver temporairement un calendrier (activé par défaut) |
+
+**Docker :** montez le dossier des fichiers ICS dans le conteneur Node-RED et utilisez le chemin *interne* au conteneur (par exemple `/data/calendriers/enfants.ics`). Aucun nœud supplémentaire de la palette n'est nécessaire.
+
+### Interprétation du calendrier ICS
+
+- Événements `VEVENT` à la journée ou avec des horaires, avec plusieurs calendriers simultanés.
+- Récurrences `RRULE`, exclusions `EXDATE`, modifications d'occurrences `RECURRENCE-ID` et événements annulés. La recherche est limitée à deux ans et à 3 000 itérations par événement récurrent.
+- La date `DTEND` est **exclusive** : `DTSTART;VALUE=DATE:20261024` et `DTEND;VALUE=DATE:20261027` correspondent aux journées du **24 au 26 octobre inclus**.
+- Un événement horaire compte pour chacune des journées civiles qu'il recouvre. Il s'agit d'un **indicateur de journée de congé**, pas d'un détecteur de présence à la minute près.
+- Les dates à la journée et les événements avec `TZID` explicite suivent les dates civiles du calendrier ICS, indépendamment du fuseau du serveur Node-RED. Les événements UTC ou sans fuseau explicite utilisent la date civile du serveur. Les passages à l'heure d'été et d'hiver sont couverts par les tests.
+- `isPersonalHolidays` vaut `true` dès qu'**un seul calendrier** contient un événement aujourd'hui. Cela ne signifie donc pas que toute la famille est absente. La propriété `personalCalendars` permet d'examiner chaque calendrier.
+
+### Cache, disponibilité et confidentialité
+
+- Cache **en mémoire pendant 12 heures**, pour les URL et les fichiers locaux. En cas d'échec du rafraîchissement, les données précédemment mises en cache sont réutilisées. Le cache disparaît après un redémarrage. Le module ne télécharge pas automatiquement en tâche de fond : il se met à jour lors de la réception d'un message.
+- Un calendrier indisponible provoque un avertissement mais ne bloque pas les jours fériés, les vacances scolaires ni les autres calendriers. Son entrée contient `error: "calendar unavailable"`.
+- Les requêtes HTTPS ont un délai limite de 10 secondes, une taille maximale d'environ 2 Mo et un nombre limité de redirections. Les fichiers locaux sont également limités à 2 Mo.
+- **Confidentialité :** une URL privée ICS peut contenir un jeton d'accès et reste enregistrée dans la configuration du flow. Protégez l'éditeur, les exports et les sauvegardes. Utilisez uniquement des sources de confiance ; évitez les adresses de services internes non maîtrisées.
+- Le champ de configuration accepte actuellement du JSON, sans interface d'envoi de fichier ni sélecteur graphique de calendrier.
+
+### Nouvelles propriétés dans `msg.payload`
+
+| Propriété | Type | Description |
+|---|---|---|
+| `isPersonalHolidays` | boolean | Au moins un événement personnel aujourd'hui |
+| `isTomorrowPersonalHolidays` | boolean | Au moins un événement personnel demain |
+| `personalHolidaysName` | string/null | Titres des événements en cours, séparés par une virgule |
+| `personalHolidaysEndDate` | string/null | Date de fin la plus tardive parmi les événements en cours |
+| `nextPersonalHolidaysName` | string/null | Intitulé du prochain événement |
+| `nextPersonalHolidaysStartDate` | string/null | Début du prochain événement au format `JJ/MM/AAAA` |
+| `nextPersonalHolidaysEndDate` | string/null | Fin du prochain événement au format `JJ/MM/AAAA` |
+| `nextPersonalHolidaysCountdownInDays` | number/null | Nombre de jours civils avant le prochain événement |
+| `personalCalendars` | array | État de chaque calendrier avec `name`, et `error` en cas d'échec |
+
+Toutes les propriétés et configurations précédentes restent disponibles.
+
+### Exemples Node-RED et Home Assistant
+
+Dans un nœud Switch, testez `msg.payload.isPersonalHolidays` pour savoir si au moins une période de congés est active. Pour distinguer les parents des enfants, exploitez le tableau `personalCalendars` (par exemple avec un nœud Function).
+
+Si vous publiez déjà `msg.payload` vers Home Assistant via MQTT, les nouveaux champs seront transmis dans le même JSON. Vous pouvez par exemple exploiter l'attribut `isPersonalHolidays` dans un template Home Assistant.
+
+### Tests automatisés
+
+Exécutez `npm ci && npm test`. La CI couvre Node.js 14 et 16 : événements à la journée, UTC, `TZID`/`VTIMEZONE` Europe/Paris, passages à l'heure d'été/hiver en 2026, fuseaux du serveur (dont Martinique et Réunion), récurrences quotidiennes/hebdomadaires/annuelles, exclusions, déplacements, 29 février, calendriers simultanés et non-régression du module existant.
+
+**Limites connues :** recherche limitée à deux ans, cache uniquement en mémoire, interprétation locale des événements UTC ou sans fuseau explicite, et prise en charge non garantie des extensions propriétaires de certains calendriers. Cette fonctionnalité indique des journées de congé, pas une présence horaire précise.

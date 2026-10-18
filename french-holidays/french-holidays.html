@@ -5,7 +5,8 @@
         defaults: {
             name: {value:""},   
             academy: {value:""},
-            geo: {value:""}
+            geo: {value:""},
+            personalCalendars: {value:"[]", validate: function(value) { try { const entries = JSON.parse(value || "[]"); return Array.isArray(entries) && entries.every(e => e && typeof e.name === "string" && typeof e.source === "string" && ["url", "file"].includes(e.type)); } catch (e) { return false; } }}
         },
         inputs:1,
         outputs:1,
@@ -77,12 +78,18 @@
             <option>Wallis et Futuna</option>
             </select>
     </div>
+    <div class="form-row">
+        <label for="node-input-personalCalendars"><i class="fa fa-calendar"></i> Personal calendars (ICS)</label>
+        <textarea id="node-input-personalCalendars" rows="7" style="width: 100%; font-family: monospace;" placeholder='[{"name":"Parents","type":"url","source":"https://example.org/holidays.ics"}]'></textarea>
+        <small>Optional JSON array. Each item has name, type (url or file), source, optional filter and enabled. Use HTTPS for URL feeds. Example: [{"name":"Family","type":"file","source":"/data/holidays.ics"}]</small>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="french-holidays">
     <body>
     <h3>About</h3>
     <p>Retrieves French public and school holidays details</p>
+    <p>Optionally load multiple personal ICS calendars using the Personal calendars JSON array. Calendar errors are reported as warnings and never block official holiday results.</p>
     <h3>Outputs</h3>
     <ol class="node-ports">
         <li>Standard output
