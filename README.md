@@ -289,37 +289,77 @@ Les prochaines Vacances scolaires pour la __{{ states.sensor.frenchdaysdata.attr
 
 ## Personal ICS calendars (optional)
 
-Add one or more personal calendars to the node's **Personal calendars (ICS)** configuration field.
-Enter a JSON array (or leave `[]` to disable this feature):
+You can subscribe to **multiple personal or family vacation calendars** without changing the existing French public-holiday and school-holiday settings.
+
+In the French Holidays node editor, find **Personal calendars (ICS)** and enter a JSON array. The default `[]` disables this optional feature.
 
 ```json
 [
-  {"name": "Parents", "type": "url", "source": "https://example.org/private.ics"},
-  {"name": "Children", "type": "file", "source": "/data/children.ics", "filter": "Holiday"}
+  {
+    "name": "Parents",
+    "type": "url",
+    "source": "https://calendar.example.org/private/parents.ics",
+    "filter": "Holiday"
+  },
+  {
+    "name": "Children",
+    "type": "file",
+    "source": "/data/calendars/children.ics"
+  }
 ]
 ```
 
-- `type`: `url` for HTTPS calendar subscriptions, `file` for a local .ics file accessible from the Node-RED runtime/container.
-- `source`: full URL or absolute file path; `name`: friendly calendar name.
-- `filter`: optional case-insensitive keyword matched against ICS event titles.
-- `enabled: false`: temporarily disable a calendar.
-- Downloaded content is cached in memory for 12 hours and stale content is used if an update fails. Local files use the same cache lifetime. Individual failed calendars produce a node warning; official holiday output continues normally.
-- **Privacy**: ICS subscription URLs may contain private tokens. They are stored in the Node-RED flow configuration; protect flow exports, editor access and backups. Only subscribe to trusted URLs.
-- Repeated events, recurrence exclusions, and ICS all-day exclusive end dates are supported. An event with clock times counts for every calendar day it overlaps. Time-zone processing follows the host Node-RED runtime.
-- If several personal calendars overlap, `isPersonalHolidays` is true whenever at least one event is in progress.
+| Setting | Required | Description |
+|---|---|---|
+| `name` | Yes | Calendar label, e.g. Parents or Children |
+| `type` | Yes | `url` (HTTPS subscription) or `file` (local filesystem) |
+| `source` | Yes | HTTPS URL or absolute path visible from the Node-RED process/container |
+| `filter` | No | Case-insensitive substring match on event titles. **Without a filter, every event is treated as a personal holiday.** |
+| `enabled` | No | Set to `false` to temporarily disable an entry (enabled by default) |
 
-Additional fields in `msg.payload`:
+**Docker:** mount the folder containing the ICS files into the Node-RED container and use the path *inside* the container (for example `/data/calendars/children.ics`). No additional Node-RED palette node is required.
+
+### How the ICS calendar is interpreted
+
+- Supports all-day and timed `VEVENT` entries and multiple concurrent calendars.
+- Supports recurring entries (`RRULE`), exclusions (`EXDATE`), changed occurrences (`RECURRENCE-ID`), and cancelled events. A recurrence expansion is bounded to a two-year forward horizon and a maximum of 3,000 iterations per recurring event.
+- `DTEND` is **exclusive**. For example, `DTSTART;VALUE=DATE:20261024` and `DTEND;VALUE=DATE:20261027` mean October 24–26 (inclusive).
+- An event with clock times is considered active on each touched calendar day. This is a **day-based vacation indicator**, not a real-time occupancy flag.
+- All-day dates and events with an explicit `TZID` use their ICS civil dates, independently of the Node-RED host time zone. UTC/floating timestamps still use the host-local civil date. Daylight-saving transitions are covered by automated tests.
+- Aggregated `isPersonalHolidays` is true if *at least one* imported event occurs today; it does **not** mean that every family member is away. Inspect `personalCalendars` for individual calendars.
+
+### Caching, reliability and privacy
+
+- ICS data is cached **in memory for 12 hours**, for both URLs and local files. A stale cached copy can be used if refreshing fails; the cache is lost on restart. There is no background polling: loading happens when the node receives an input message.
+- If a calendar fails, the node emits a warning and returns official holiday results and any other working personal calendars. The affected entry has `error: "calendar unavailable"`.
+- HTTPS feeds have a 10-second request timeout, an approximately 2 MB maximum response size, and a redirect limit. Local ICS files also have a 2 MB size limit.
+- **Keep private calendar URLs confidential.** Subscription URLs frequently contain access tokens and are stored in flow configuration. Protect editor access, exported flows and backups. Use trusted remote sources only; do not configure untrusted or internal-network targets.
+- The current text-area configuration expects JSON and does not offer a file-upload dialog or an interactive calendar picker.
+
+### New `msg.payload` fields
 
 | Property | Type | Meaning |
 |---|---|---|
-| `isPersonalHolidays` | boolean | An imported event is active today |
-| `isTomorrowPersonalHolidays` | boolean | An imported event is active tomorrow |
-| `personalHolidaysName` | string/null | Titles of current events |
-| `personalHolidaysEndDate` | string/null | Last end date of current events |
-| `nextPersonalHolidaysName` | string/null | Next upcoming event |
-| `nextPersonalHolidaysStartDate` | string/null | Next start date (DD/MM/YYYY) |
-| `nextPersonalHolidaysEndDate` | string/null | Next end date (DD/MM/YYYY) |
-| `nextPersonalHolidaysCountdownInDays` | number/null | Days before next event |
-| `personalCalendars` | array | Per-calendar summaries including `name`; calendar failures include an `error` |
+| `isPersonalHolidays` | boolean | At least one imported event covers today |
+| `isTomorrowPersonalHolidays` | boolean | At least one imported event covers tomorrow |
+| `personalHolidaysName` | string/null | Comma-separated titles of current events |
+| `personalHolidaysEndDate` | string/null | Latest end date among current events |
+| `nextPersonalHolidaysName` | string/null | Title of the next future event |
+| `nextPersonalHolidaysStartDate` | string/null | Next event start date in `DD/MM/YYYY` |
+| `nextPersonalHolidaysEndDate` | string/null | Next event end date in `DD/MM/YYYY` |
+| `nextPersonalHolidaysCountdownInDays` | number/null | Calendar days until next future event |
+| `personalCalendars` | array | Individual calendar states with `name`; failed entries contain `error` |
 
-Previously available output fields are unchanged.
+All existing payload properties and configurations remain available.
+
+### Examples for Node-RED and Home Assistant
+
+In a Node-RED Switch node, check `msg.payload.isPersonalHolidays` to detect any personal vacation. To distinguish parents from children, inspect the `personalCalendars` array (for example in a Function node).
+
+If you already publish `msg.payload` to Home Assistant using MQTT, its new fields are included in the same JSON message. For example, a Home Assistant template can use the `isPersonalHolidays` attribute.
+
+### Automated regression tests
+
+Run `npm ci && npm test`. CI covers Node.js 14 and 16, including date-only events, UTC and Europe/Paris `TZID`/`VTIMEZONE`, clock changes in March/October 2026, host-time-zone differences (including Martinique and Réunion), weekly/daily/annual recurrence, exclusions and moved events, February 29, overlapping calendars, and compatibility with the existing holiday node.
+
+**Known limitations:** a two-year lookup horizon, in-memory-only cache, host-local interpretation of UTC/floating events, and no guarantee that all third-party calendar-specific extensions are supported. Treat this as a vacation-day detector, not as a precise hourly presence sensor.
