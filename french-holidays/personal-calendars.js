@@ -126,6 +126,12 @@ function collectEvents(ics, today) {
       let count = 0
       while ((next = iterator.next()) && count++ < MAX_OCCURRENCES) {
         if (next.toJSDate() > horizon) break
+        // Guard against calendar engines normalizing invalid leap-day recurrences
+        // into neighbouring dates (e.g. February 29 -> March 1).
+        const rule = component.getFirstPropertyValue('rrule')
+        const parts = rule && rule.parts
+        if (parts && parts.BYMONTH && !parts.BYMONTH.map(Number).includes(next.month)) continue
+        if (parts && parts.BYMONTHDAY && !parts.BYMONTHDAY.map(Number).includes(next.day)) continue
         add(next)
       }
     }
