@@ -277,3 +277,40 @@ Prochain jour férié : __{{ states.sensor.frenchdaysdata.attributes.nextPublicH
 Les prochaines vacances scolaires pour la __{{ states.sensor.frenchdaysdata.attributes.zones }}__ sont les __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysName }}__, du __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysStartDate }}__ au __{{ states.sensor.frenchdaysdata.attributes.nextSchoolHolidaysEndDate }}__.
 {% endif %}
 ```
+
+ 
+## Calendriers ICS personnels (optionnel)
+
+Le nœud accepte plusieurs calendriers de vacances ou congés personnels dans le champ **Personal calendars (ICS)**.
+Saisir un tableau JSON (laisser `[]` pour désactiver cette fonctionnalité) :
+
+```json
+[
+  {"name": "Parents", "type": "url", "source": "https://exemple.fr/prive.ics"},
+  {"name": "Enfants", "type": "file", "source": "/data/enfants.ics", "filter": "Vacances"}
+]
+```
+
+- `type` : `url` pour une URL HTTPS, `file` pour un fichier local visible depuis Node-RED (ou dans le conteneur Docker).
+- `name` : nom du calendrier ; `source` : URL ou chemin ; `filter` : filtre facultatif sur le titre des événements (sans tenir compte de la casse).
+- `enabled: false` permet de désactiver temporairement un calendrier.
+- Cache en mémoire pendant 12 heures, avec réutilisation de la dernière version en cas d'échec de mise à jour. Les fichiers locaux suivent la même durée de cache.
+- Si un calendrier est indisponible, un avertissement apparaît dans Node-RED, mais les jours fériés et vacances scolaires restent disponibles.
+- Les événements récurrents, les exclusions et les dates de fin exclusives des événements sur des journées entières sont pris en charge. Un événement horaire compte pour chaque journée civile touchée. Le traitement horaire suit l'environnement Node-RED.
+- **Confidentialité** : une URL privée ICS peut contenir un jeton d'accès. Protégez les exports de flows, l'éditeur et les sauvegardes.
+
+Nouvelles propriétés dans `msg.payload` :
+
+| Propriété | Type | Description |
+|---|---|---|
+| `isPersonalHolidays` | boolean | Vacances personnelles aujourd'hui |
+| `isTomorrowPersonalHolidays` | boolean | Vacances personnelles demain |
+| `personalHolidaysName` | string/null | Titres des événements en cours |
+| `personalHolidaysEndDate` | string/null | Dernière date de fin en cours |
+| `nextPersonalHolidaysName` | string/null | Prochain événement |
+| `nextPersonalHolidaysStartDate` | string/null | Date de début (JJ/MM/AAAA) |
+| `nextPersonalHolidaysEndDate` | string/null | Date de fin (JJ/MM/AAAA) |
+| `nextPersonalHolidaysCountdownInDays` | number/null | Nombre de jours avant le prochain événement |
+| `personalCalendars` | array | État par calendrier avec `name` et éventuellement `error` |
+
+Les propriétés existantes restent inchangées.
